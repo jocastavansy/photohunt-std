@@ -1,4 +1,4 @@
-try { require("dotenv").config(); } catch (e) { }
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -13,10 +13,19 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 /* ================= MONGOOSE CONNECTION ================= */
-const mongoURI = process.env.MONGO_URI || process.env.MONGO_URL || process.env.MONGODB_URI || "mongodb+srv://vanisyarahma:photohuntwin@cluster0.flsgsfw.mongodb.net/photohunt_backend?appName=Cluster0";
+const mongoURI = process.env.MONGODB_URI;
+
+if (!mongoURI) {
+  console.error("❌ MONGODB_URI is not configured");
+  process.exit(1);
+}
+
 mongoose.connect(mongoURI)
   .then(() => console.log("✅ MongoDB Connected. Database:", mongoose.connection.name))
-  .catch(err => console.error("❌ MongoDB Connection Error:", err.message));
+  .catch(err => {
+    console.error("❌ MongoDB Connection Error:", err.message);
+    process.exit(1);
+  });
 
 /* ================= MIDDLEWARE & STATIC ================= */
 app.use(cors({
