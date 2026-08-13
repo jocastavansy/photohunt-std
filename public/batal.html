@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batalkan Pemesanan Reservasi - PhotoHunt</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding-bottom: 50px;
+        }
+
+        header {
+            background: linear-gradient(180deg, #a8a8a8 0%, #f5f5f5 100%);
+            padding: 20px 40px;
+            height: 110px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .logo {
+            font-weight: 600;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: black;
+            gap: 8px;
+        }
+
+        .cta-btn {
+            background: #000;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .navigation-container {
+            max-width: 1112px;
+            margin: 0 auto;
+            margin-top: 20px;
+            padding-bottom: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #000;
+        }
+
+        .back-icon-circle {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .cancel-card {
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid #000;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 32px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cancel-card h2 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .cancel-card .subtitle {
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.5);
+            margin-bottom: 24px;
+        }
+
+        .warning-box {
+            width: 80px;
+            height: 80px;
+            background-color: #FFF4E5;
+            color: #FF9800;
+            border-radius: 20px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            margin: 0 auto 24px;
+        }
+
+        .question {
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 22px;
+            line-height: 1.5;
+            color: #333;
+        }
+
+        textarea {
+            width: 100%;
+            max-width: 420px;
+            height: 100px;
+            border-radius: 12px;
+            border: 2px solid rgba(0, 0, 0, 0.3);
+            padding: 14px;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus {
+            border-color: #000;
+        }
+
+        textarea::placeholder {
+            color: rgba(0, 0, 0, 0.4);
+        }
+
+        .cancel-btn {
+            display: block;
+            margin-top: 30px;
+            background: #000;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            padding: 12px 36px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .cancel-btn:hover:not(:disabled) {
+            background: #333;
+            transform: translateY(-1px);
+        }
+
+        .cancel-btn:disabled {
+            background: #d4d4d4;
+            color: #8c8c8c;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 20px;
+            }
+
+            .cancel-card {
+                width: 95%;
+                padding: 30px 20px;
+            }
+
+            textarea {
+                width: 100%;
+            }
+        }
+        
+    </style>
+</head>
+
+<header class="ph-header">
+    <div class="ph-header-content header-content">
+        <a href="history.html" class="ph-logo logo">
+            PhotoHunt
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" style="width:24px; height:24px;">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+        </a>
+        <button class="ph-cta-btn cta-btn" onclick="window.location.href='chat.html'">Chat</button>
+    </div>
+</header>
+
+<body>
+    <main>
+
+        <div class="navigation-container">
+            <button class="back-btn">
+                <div class="back-icon-circle">←</div>
+                Kembali ke Detail Pemesanan
+            </button>
+        </div>
+
+        <section class="cancel-card">
+            <h2>Batalkan Pemesanan</h2>
+            <div class="subtitle">Konfirmasi pembatalan</div>
+
+            <div class="warning-box">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z">
+                    </path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+
+            <div class="question">
+                Apakah Anda yakin ingin membatalkan<br> pemesanan ini?
+            </div>
+
+            <textarea id="alasanInput" placeholder="Masukkan alasan pembatalan (Wajib diisi)"
+                style="margin-bottom: 20px;"></textarea>
+
+            <div id="refund-form"
+                style="width: 100%; max-width: 420px; text-align: left; background: #fafafa; padding: 20px; border-radius: 12px; border: 1px dashed #ccc; margin-bottom: 24px;">
+                <p style="font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #555;">Detail Rekening Refund
+                    (Jika disetujui)</p>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 11px; color: #888; display: block; margin-bottom: 4px;">Nama Bank /
+                        E-Wallet</label>
+                    <input type="text" id="bankName" placeholder="Contoh: BCA / GoPay"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px;">
+                </div>
+                <div style="margin-bottom: 12px;">
+                    <label style="font-size: 11px; color: #888; display: block; margin-bottom: 4px;">Nomor Rekening /
+                        HP</label>
+                    <input type="text" id="accountNumber" placeholder="Contoh: 1234567890"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px;">
+                </div>
+                <div>
+                    <label style="font-size: 11px; color: #888; display: block; margin-bottom: 4px;">Nama Pemilik
+                        Rekening</label>
+                    <input type="text" id="accountName" placeholder="Contoh: Budi Santoso"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 13px;">
+                </div>
+            </div>
+
+            <button class="cancel-btn" disabled>BATALKAN PESANAN</button>
+        </section>
+
+        <script src="js/batal.js" defer></script>
+
+    </main>
+</body>
+
+</html>

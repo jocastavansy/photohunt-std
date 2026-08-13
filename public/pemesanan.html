@@ -1,0 +1,633 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Informasi Pemesanan - PhotoHunt</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Arimo:wght@400;700&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      font-family: "Inter", sans-serif;
+      color: #111;
+    }
+
+    .ph-page-wrapper {
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      padding-top: 120px;
+      padding-bottom: 50px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .ph-page-wrapper * {
+      box-sizing: border-box;
+    }
+
+    .ph-header {
+      background: linear-gradient(180deg, #e0e0e0 0%, #f5f5f5 100%);
+      padding: 0 40px;
+      height: 100px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: fixed;
+      top: 0;
+      z-index: 50;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .ph-header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .ph-logo {
+      font-weight: 700;
+      font-size: 28px;
+      display: flex;
+      align-items: center;
+      color: #000;
+      text-decoration: none;
+    }
+
+    .ph-cta-btn {
+      background: #000;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .navigation-bar {
+      width: 95%;
+      max-width: 1200px;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+    }
+
+    .back-icon-circle {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      transition: 0.2s;
+    }
+
+    .back-btn:hover .back-icon-circle {
+      background: #000;
+      color: #fff;
+    }
+
+    .nav-back-text {
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .main-content-card {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 20px;
+      padding: 40px;
+      width: 95%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    .card-page-title {
+      font-family: "Arimo", sans-serif;
+      font-weight: 700;
+      font-size: 34px;
+      text-align: center;
+      margin: 0 0 -20px 0;
+    }
+
+    .page-subtitle {
+      font-size: 16px;
+      color: #454545;
+      text-align: center;
+      font-family: "Arimo", sans-serif;
+      margin-bottom: 8px;
+    }
+
+    .status-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 24px;
+    }
+
+    .order-id-display {
+      font-size: 14px;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .ph-status-badge {
+      background: #22c55e;
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .studio-summary-card {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      background: #f9f9f9;
+    }
+
+    .studio-img-wrapper {
+      width: 120px;
+      height: 90px;
+      border-radius: 8px;
+      background: #fff;
+      border: 1px solid #d1d5dc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .studio-details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-family: "Arimo", sans-serif;
+    }
+
+    .studio-name {
+      font-weight: 700;
+      font-size: 20px;
+      text-transform: uppercase;
+    }
+
+    .studio-addr {
+      font-size: 14px;
+      color: #4a5565;
+    }
+
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      font-family: "Arimo", sans-serif;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border: 1px solid #e4e7eb;
+      padding: 12px 16px;
+      border-radius: 8px;
+    }
+
+    .detail-label-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      text-transform: uppercase;
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .detail-value {
+      font-size: 16px;
+      font-weight: 600;
+      padding-left: 24px;
+    }
+
+    .payment-section {
+      border: 1px solid #e4e7eb;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .pay-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      font-family: "Arimo", sans-serif;
+      font-size: 14px;
+    }
+
+    .pay-row:last-child {
+      border-bottom: none;
+    }
+
+    .pay-row.total {
+      background: #f9f9f9;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .pay-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .pay-text div:first-child {
+      font-weight: 600;
+    }
+
+    .pay-text div:last-child {
+      font-size: 12px;
+      color: #666;
+      margin-top: 2px;
+    }
+
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #f9f9f9;
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+      padding: 32px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .qr-img {
+      width: 160px;
+      height: 160px;
+      background: #fff;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+      margin: 16px 0;
+    }
+
+    .action-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .btn-black,
+    .btn-outline {
+      background: transparent;
+      color: #000;
+      height: 48px;
+      padding: 0 40px;
+      border-radius: 24px;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      border: 2px solid #e0e0e0;
+      transition: all 0.3s ease;
+    }
+
+    #reviewBtn:hover,
+    #reviewBtn:active {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+    }
+
+    #cancelOrderBtn:hover,
+    #cancelOrderBtn:active {
+      background: #dc2626;
+      color: #fff;
+      border-color: #dc2626;
+    }
+
+    .icon-svg {
+      width: 16px;
+      height: 16px;
+      stroke: #000;
+    }
+
+    @media (max-width: 768px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .studio-summary-card {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .main-content-card {
+        padding: 20px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn-black,
+      .btn-outline {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="ph-header">
+    <div class="ph-header-content">
+      <a href="history.html" class="ph-logo">
+        PhotoHunt
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" style="margin-left: 8px; width: 24px">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+      </a>
+      <button class="ph-cta-btn" onclick="window.location.href = 'chat.html'">
+        Chat
+      </button>
+    </div>
+  </header>
+
+  <div class="ph-page-wrapper">
+    <div class="navigation-bar">
+      <button class="back-btn" onclick="window.location.href = 'history.html'">
+        <div class="back-icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="nav-back-text" onclick="window.location.href = 'history.html'">
+        Kembali ke Riwayat
+      </div>
+    </div>
+
+    <main class="main-content-card">
+      <div class="header-group"
+        style="display: flex; flex-direction: column; align-items: center; gap: 3px; width: 100%;">
+        <h1 class="card-page-title" style="margin: 0; font-size: 32px;">Informasi Pemesanan</h1>
+        <div class="page-subtitle" style="margin: 0; font-size: 15px; color: #4b5563;">
+          Terima kasih, pembayaran Anda berhasil dikonfirmasi
+        </div>
+        <div id="bookingSubmittedTime" style="font-size: 15px; color: #374151; font-weight: 500; margin-top: 2px;">
+          Waktu Pengajuan: <span id="createdAtDisplay" style="font-weight: 700; color: #111827;">-</span>
+        </div>
+        <div class="order-id-display" style="margin-top: 2px;">
+          Nomor Pemesanan:
+          <span id="orderId" style="font-weight: 700; color: #000">Generating...</span>
+        </div>
+        <div class="ph-status-badge" style="margin-top: 6px;">PEMBAYARAN BERHASIL</div>
+      </div>
+
+      <div class="studio-summary-card">
+        <div class="studio-img-wrapper">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+        </div>
+        <div class="studio-details">
+          <div id="studioName" class="studio-name">Loading...</div>
+          <div id="studioAddress" class="studio-addr">Loading...</div>
+          <div class="studio-rate">
+            <svg class="icon-svg" style="fill: #000; width: 14px; height: 14px" viewBox="0 0 24 24">
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2">
+              </polygon>
+            </svg>
+            <span>4.8 (120 Review)</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            margin-bottom: 0;
+          ">
+        <section>
+          <div class="section-title">Detail Pesanan</div>
+          <div class="detail-grid">
+            <div class="detail-item">
+              <div class="detail-label-row">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Nama Pemesan
+              </div>
+              <div id="customerName" class="detail-value">-</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label-row">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                  <line x1="7" y1="7" x2="7.01" y2="7"></line>
+                </svg>
+                Paket Foto
+              </div>
+              <div id="packageName" class="detail-value">-</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label-row">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                Tanggal
+              </div>
+              <div id="bookingDate" class="detail-value">-</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label-row">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Waktu
+              </div>
+              <div id="bookingTime" class="detail-value">-</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label-row">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="9" cy="7" r="4"></circle>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                Jumlah Orang
+              </div>
+              <div id="peopleCount" class="detail-value">-</div>
+            </div>
+
+            <div class="detail-item">
+              <div class="detail-label-row">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Durasi
+              </div>
+              <div id="durationDisplay" class="detail-value">-</div>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <div class="section-title">Rincian Pembayaran</div>
+
+          <div class="payment-section">
+            <div class="pay-row">
+              <div class="pay-info">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path
+                    d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+                  </path>
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                  <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                <div class="pay-text">
+                  <div>Harga Paket</div>
+                  <div id="payPackageName">-</div>
+                </div>
+              </div>
+              <span id="packagePrice" style="font-weight: 600">-</span>
+            </div>
+
+            <div class="pay-row">
+              <div class="pay-info">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="8.5" cy="7" r="4"></circle>
+                  <line x1="20" y1="8" x2="20" y2="14"></line>
+                  <line x1="23" y1="11" x2="17" y2="11"></line>
+                </svg>
+                <div class="pay-text">
+                  <div>Tambahan Orang</div>
+                  <div>Biaya Add-on</div>
+                </div>
+              </div>
+              <span id="extraPrice" style="font-weight: 600">Rp 0</span>
+            </div>
+
+            <div class="pay-row total">
+              <div class="pay-info">
+                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <span>Total Pembayaran</span>
+              </div>
+              <span id="totalPrice" style="font-size: 18px; font-weight: 800; color: #22c55e">-</span>
+            </div>
+          </div>
+
+          <div class="qr-section">
+            <div class="section-title" style="border: none; margin-bottom: 0; font-size: 20px">
+              Tunjukkan QR Code
+            </div>
+            <div style="
+                  font-size: 14px;
+                  color: #666;
+                  font-family: &quot;Arimo&quot;;
+                ">
+              Perlihatkan kepada staff studio saat kedatangan
+            </div>
+
+            <img id="qrImage" class="qr-img" alt="QR Code" src="" />
+
+            <div style="font-size: 12px; color: #999; margin-top: 8px">
+              Scan untuk Verifikasi
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="action-buttons">
+        <button id="cancelOrderBtn" class="btn-outline" onclick="window.location.href = 'batal.html'">
+          Batalkan Pesanan
+        </button>
+        <button id="reviewBtn" class="btn-black" onclick="window.location.href = 'review.html'">
+          Berikan Review
+        </button>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/pemesanan.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daftarkan Studio - Mitra PhotoHunt</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #f3f4f6;
+    }
+
+    .daftarkan-mitra {
+      --primary: #000000;
+      --primary-hover: #333333;
+      --border: #d1d5dc;
+      --bg-light: #f9fafb;
+      --danger: #ef4444;
+      --radius: 10px;
+
+      font-family: "Inter", "Segoe UI", sans-serif;
+      color: #1f2937;
+      line-height: 1.5;
+
+      padding: 30px 20px;
+      min-height: 100vh;
+    }
+
+    .daftarkan-mitra * {
+      box-sizing: border-box;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin: 0;
+    }
+
+    .mitra-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .mitra-header-title {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #111;
+    }
+
+    .mitra-header-desc {
+      color: #6b7280;
+    }
+
+    .dm-form-wrapper {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      padding: 32px;
+    }
+
+    .dm-stepper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .dm-step-item {
+      display: flex;
+      align-items: center;
+    }
+
+    .dm-step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--border);
+      color: #9ca3af;
+      font-weight: 600;
+      background: #fff;
+      transition: all 0.3s;
+      z-index: 2;
+      font-size: 14px;
+    }
+
+    .dm-step-circle.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .dm-step-line {
+      width: 40px;
+      height: 3px;
+      background: var(--border);
+      margin: 0 4px;
+    }
+
+    .dm-step-line.active {
+      background: var(--primary);
+    }
+
+    @media (max-width: 600px) {
+      .dm-stepper {
+        margin-bottom: 24px;
+      }
+
+      .dm-step-circle {
+        width: 24px;
+        height: 24px;
+        font-size: 11px;
+        border-width: 1.5px;
+      }
+
+      .dm-step-line {
+        width: 12px;
+        margin: 0 2px;
+        height: 2px;
+      }
+    }
+
+    .dm-step {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .dm-step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dm-section-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .dm-field-group {
+      margin-bottom: 20px;
+    }
+
+    .dm-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .dm-input,
+    .dm-textarea,
+    .dm-select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+      background: #fff;
+    }
+
+    .dm-input:focus,
+    .dm-textarea:focus,
+    .dm-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .dm-textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .dm-grid-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .dm-radio-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    .dm-radio-group input {
+      display: none;
+    }
+
+    .dm-radio-btn {
+      flex: 1;
+      text-align: center;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .dm-radio-group input:checked+.dm-radio-btn {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    .dm-dynamic-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .dm-action-btn {
+      width: 48px;
+      flex-shrink: 0;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .dm-action-btn.remove {
+      background: var(--danger);
+    }
+
+    #image-preview-container {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .img-preview-wrapper {
+      position: relative;
+      width: 90px;
+      height: 90px;
+    }
+
+    .img-preview-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .img-remove-btn {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--danger);
+      color: white;
+      border: 2px solid #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      transition: transform 0.1s;
+    }
+
+    .img-remove-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .image-counter-text {
+      font-size: 13px;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .image-error-msg {
+      color: var(--danger);
+      font-size: 13px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .dm-schedule-item {
+      background: var(--bg-light);
+      padding: 16px;
+      border-radius: var(--radius);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .dm-schedule-inputs {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .dm-btn-copy {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--primary);
+      background: none;
+      border: none;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .dm-package-card {
+      border: 1px solid #e5e7eb;
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      background: #fff;
+    }
+
+    .dm-btn-dashed {
+      width: 100%;
+      border: 2px dashed var(--border);
+      background: transparent;
+      padding: 14px;
+      border-radius: var(--radius);
+      cursor: pointer;
+      color: #6b7280;
+      font-weight: 500;
+      transition: 0.2s;
+    }
+
+    .dm-btn-dashed:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .dm-footer {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 24px;
+    }
+
+    .dm-btn-back {
+      padding: 12px 24px;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+      font-family: inherit;
+    }
+
+    .dm-btn-next {
+      padding: 12px 32px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 500;
+      font-family: inherit;
+    }
+
+    .dm-btn-next:hover {
+      background: var(--primary-hover);
+    }
+
+    .dm-btn-next:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 600px) {
+      .dm-grid-row {
+        grid-template-columns: 1fr;
+      }
+
+      .dm-schedule-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .dm-schedule-inputs {
+        width: 100%;
+      }
+
+      .dm-time {
+        flex: 1;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="daftarkan-mitra">
+    <div class="mitra-header">
+      <h1 class="mitra-header-title">Daftarkan Studio Anda</h1>
+      <p class="mitra-header-desc">
+        Lengkapi data untuk mulai menyewakan studio
+      </p>
+    </div>
+
+    <form id="form-daftar-mitra" class="dm-form-wrapper" enctype="multipart/form-data"
+      onsubmit="handleFinalSubmit(event)">
+      <div class="dm-stepper">
+        <div class="dm-step-item">
+          <div class="dm-step-circle active">1</div>
+          <div class="dm-step-line"></div>
+        </div>
+        <div class="dm-step-item">
+          <div class="dm-step-circle">2</div>
+          <div class="dm-step-line"></div>
+        </div>
+        <div class="dm-step-item">
+          <div class="dm-step-circle">3</div>
+          <div class="dm-step-line"></div>
+        </div>
+        <div class="dm-step-item">
+          <div class="dm-step-circle">4</div>
+          <div class="dm-step-line"></div>
+        </div>
+        <div class="dm-step-item">
+          <div class="dm-step-circle">5</div>
+        </div>
+      </div>
+
+      <section class="dm-step active">
+        <h2 class="dm-section-title">Informasi Dasar Studio</h2>
+
+        <div class="dm-field-group">
+          <label class="dm-label">Nama Studio *</label>
+          <input class="dm-input" name="studio_name" placeholder="Contoh: Studio PhotoBox Bekasi" required />
+        </div>
+
+        <div class="dm-field-group">
+          <label class="dm-label">Tipe Studio *</label>
+          <div class="dm-radio-group">
+            <input type="radio" id="t1" name="studio_type" value="photobox" checked /><label for="t1"
+              class="dm-radio-btn">PhotoBox</label>
+            <input type="radio" id="t2" name="studio_type" value="photostudio" /><label for="t2"
+              class="dm-radio-btn">PhotoStudio</label>
+          </div>
+        </div>
+
+        <div class="dm-field-group">
+          <label class="dm-label">Deskripsi Studio *</label>
+          <textarea class="dm-textarea" name="description" placeholder="Jelaskan fasilitas dan keunggulan studio..."
+            required></textarea>
+        </div>
+
+        <div class="dm-field-group">
+          <label for="dm_addr" class="dm-label">Alamat Lengkap *</label>
+          <textarea id="dm_addr" name="address" class="dm-textarea" style="min-height: 100px"
+            placeholder="Jl. Contoh No. 123, Bekasi Timur..." required></textarea>
+        </div>
+
+        <div class="dm-field-group">
+          <label for="dm_city" class="dm-label">Kota *</label>
+          <select id="dm_city" name="city" class="dm-select" required>
+            <option value="" disabled selected>Pilih Kota</option>
+            <option value="bekasi">Bekasi</option>
+            <option value="jakarta">Jakarta</option>
+            <option value="tangerang">Tangerang</option>
+            <option value="depok">Depok</option>
+          </select>
+        </div>
+
+        <div class="dm-field-group">
+          <label for="dm_gmaps" class="dm-label">Link Google Maps *</label>
+          <input type="url" id="dm_gmaps" name="gmaps_link" class="dm-input"
+            placeholder="Paste link Google Maps studio di sini..." required />
+          <small style="
+                color: #6b7280;
+                font-size: 12px;
+                margin-top: 4px;
+                display: block;
+              ">
+            Buka Google Maps, cari lokasi studio Anda, klik Share, lalu Copy
+            Link.
+          </small>
+        </div>
+
+        <div class="dm-footer">
+          <span></span>
+          <button type="button" class="dm-btn-next" onclick="validateAndNext(this)">
+            Lanjut
+          </button>
+        </div>
+      </section>
+
+      <section class="dm-step">
+        <h2 class="dm-section-title">Fasilitas & Media</h2>
+        <div class="dm-field-group">
+          <label class="dm-label">Logo Studio (Opsional tapi Disarankan)</label>
+          <div style="display: flex; align-items: center; gap: 15px">
+            <div style="
+                  width: 80px;
+                  height: 80px;
+                  border-radius: 50%;
+                  border: 2px dashed #d1d5db;
+                  overflow: hidden;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                  background: #f9fafb;
+                  flex-shrink: 0;
+                ">
+              <img id="logo-preview-register" src="" style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    display: none;
+                  " />
+              <span id="logo-placeholder-text" style="font-size: 10px; color: #9ca3af; text-align: center">No
+                Logo</span>
+            </div>
+
+            <div style="flex: 1">
+              <input type="file" name="logo" class="dm-input" accept="image/*" onchange="previewLogoRegister(this)" />
+              <small style="color: #6b7280; font-size: 12px; margin-top: 4px">Format: JPG/PNG. Disarankan rasio 1:1
+                (Kotak).</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="dm-field-group">
+          <label class="dm-label">Fasilitas Studio (Minimal 1) *</label>
+          <div id="facility-container">
+            <div class="dm-dynamic-row">
+              <input class="dm-input" name="facilities[]" placeholder="Contoh: Free WiFi" required />
+              <button type="button" class="dm-action-btn" onclick="addFacility()">
+                +
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="dm-field-group">
+          <label class="dm-label">Upload Foto Studio (Max 10 Foto) *</label>
+
+          <input type="file" id="image-input-trigger" name="studio_images[]" class="dm-input" accept="image/*" multiple
+            onchange="handleNewImages(this)" />
+          <small style="
+                color: #6b7280;
+                font-size: 12px;
+                margin-top: 4px;
+                display: block;
+              ">Klik untuk memilih foto. Anda bisa memilih beberapa file
+            sekaligus.</small>
+
+          <div id="image-counter" class="image-counter-text">
+            0 / 10 Foto Terpilih
+          </div>
+          <div id="image-error" class="image-error-msg"></div>
+
+          <div id="image-preview-container"></div>
+        </div>
+
+        <div class="dm-field-group">
+          <label class="dm-label">Range Harga Studio (Otomatis dari Paket Foto)</label>
+          <input class="dm-input" id="price_range_input" name="price_range" placeholder="Otomatis terhitung dari Paket Foto yang diisi..." readonly style="background:#f3f4f6; cursor:not-allowed;" />
+          <small style="color:#6b7280; font-size:12px; margin-top:4px; display:block;">Range harga akan dihitung otomatis dari harga paket terendah sampai tertinggi.</small>
+        </div>
+
+        <div class="dm-footer">
+          <button type="button" class="dm-btn-back" onclick="prevStep()">
+            Kembali
+          </button>
+          <button type="button" class="dm-btn-next" onclick="validateAndNext(this)">
+            Lanjut
+          </button>
+        </div>
+      </section>
+
+      <section class="dm-step">
+        <h2 class="dm-section-title">Jam Operasional</h2>
+        <p style="margin-bottom: 16px; font-size: 14px; color: #666">
+          Format 24 Jam (Contoh: 09:00 - 21:00). Centang "Libur" jika studio tutup pada hari tersebut.
+        </p>
+        <div class="dm-schedule-item" data-day="senin">
+          <strong>Senin *</strong>
+          <div class="dm-schedule-inputs">
+            <input type="time" class="dm-input dm-time schedule-open" name="schedule[senin][open]" required />
+            <span>s/d</span>
+            <input type="time" class="dm-input dm-time schedule-close" name="schedule[senin][close]" required />
+            <label style="display:flex; align-items:center; gap:4px; margin-left:8px; cursor:pointer; font-size:13px; font-weight:600; color:#ef4444;">
+              <input type="checkbox" class="schedule-closed" name="schedule[senin][closed]" onchange="toggleDayClosed(this)" /> Libur
+            </label>
+          </div>
+        </div>
+        <div style="text-align: right; margin-bottom: 20px">
+          <button type="button" class="dm-btn-copy" onclick="copyMonday()">
+            ↓ Terapkan jam Senin ke semua hari
+          </button>
+        </div>
+        <div id="other-days">
+          <div class="dm-schedule-item" data-day="selasa">
+            <strong>Selasa</strong>
+            <div class="dm-schedule-inputs">
+              <input type="time" class="dm-input dm-time schedule-open" name="schedule[selasa][open]" />
+              <span>s/d</span>
+              <input type="time" class="dm-input dm-time schedule-close" name="schedule[selasa][close]" />
+              <label style="display:flex; align-items:center; gap:4px; margin-left:8px; cursor:pointer; font-size:13px; font-weight:600; color:#ef4444;">
+                <input type="checkbox" class="schedule-closed" name="schedule[selasa][closed]" onchange="toggleDayClosed(this)" /> Libur
+              </label>
+            </div>
+          </div>
+          <div class="dm-schedule-item" data-day="rabu">
+            <strong>Rabu</strong>
+            <div class="dm-schedule-inputs">
+              <input type="time" class="dm-input dm-time schedule-open" name="schedule[rabu][open]" />
+              <span>s/d</span>
+              <input type="time" class="dm-input dm-time schedule-close" name="schedule[rabu][close]" />
+              <label style="display:flex; align-items:center; gap:4px; margin-left:8px; cursor:pointer; font-size:13px; font-weight:600; color:#ef4444;">
+                <input type="checkbox" class="schedule-closed" name="schedule[rabu][closed]" onchange="toggleDayClosed(this)" /> Libur
+              </label>
+            </div>
+          </div>
+          <div class="dm-schedule-item" data-day="kamis">
+            <strong>Kamis</strong>
+            <div class="dm-schedule-inputs">
+              <input type="time" class="dm-input dm-time schedule-open" name="schedule[kamis][open]" />
+              <span>s/d</span>
+              <input type="time" class="dm-input dm-time schedule-close" name="schedule[kamis][close]" />
+              <label style="display:flex; align-items:center; gap:4px; margin-left:8px; cursor:pointer; font-size:13px; font-weight:600; color:#ef4444;">
+                <input type="checkbox" class="schedule-closed" name="schedule[kamis][closed]" onchange="toggleDayClosed(this)" /> Libur
+              </label>
+            </div>
+          </div>
+          <div class="dm-schedule-item" data-day="jumat">
+            <strong>Jumat</strong>
+            <div class="dm-schedule-inputs">
+              <input type="time" class="dm-input dm-time schedule-open" name="schedule[jumat][open]" />
+              <span>s/d</span>
+              <input type="time" class="dm-input dm-time schedule-close" name="schedule[jumat][close]" />
+              <label style="display:flex; align-items:center; gap:4px; margin-left:8px; cursor:pointer; font-size:13px; font-weight:600; color:#ef4444;">
+                <input type="checkbox" class="schedule-closed" name="schedule[jumat][closed]" onchange="toggleDayClosed(this)" /> Libur
+              </label>
+            </div>
+          </div>
+          <div class="dm-schedule-item" data-day="sabtu">
+            <strong>Sabtu</strong>
+            <div class="dm-schedule-inputs">
+              <input type="time" class="dm-input dm-time schedule-open" name="schedule[sabtu][open]" />
+              <span>s/d</span>
+              <input type="time" class="dm-input dm-time schedule-close" name="schedule[sabtu][close]" />
+              <label style="display:flex; align-items:center; gap:4px; margin-left:8px; cursor:pointer; font-size:13px; font-weight:600; color:#ef4444;">
+                <input type="checkbox" class="schedule-closed" name="schedule[sabtu][closed]" onchange="toggleDayClosed(this)" /> Libur
+              </label>
+            </div>
+          </div>
+          <div class="dm-schedule-item" data-day="minggu">
+            <strong>Minggu</strong>
+            <div class="dm-schedule-inputs">
+              <input type="time" class="dm-input dm-time schedule-open" name="schedule[minggu][open]" />
+              <span>s/d</span>
+              <input type="time" class="dm-input dm-time schedule-close" name="schedule[minggu][close]" />
+              <label style="display:flex; align-items:center; gap:4px; margin-left:8px; cursor:pointer; font-size:13px; font-weight:600; color:#ef4444;">
+                <input type="checkbox" class="schedule-closed" name="schedule[minggu][closed]" onchange="toggleDayClosed(this)" /> Libur
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="dm-footer">
+          <button type="button" class="dm-btn-back" onclick="prevStep()">
+            Kembali
+          </button>
+          <button type="button" class="dm-btn-next" onclick="validateAndNext(this)">
+            Lanjut
+          </button>
+        </div>
+      </section>
+
+      <!-- STEP 4 SEKARANG DIHAPUS/DILEWATI KARENA PINDAH KE PAKET -->
+      <!-- <section class="dm-step"> ... </section> -->
+
+      <section class="dm-step">
+        <h2 class="dm-section-title">Paket Layanan</h2>
+        <div id="packages-container">
+          <div class="dm-package-card">
+            <div class="dm-field-group">
+              <label class="dm-label">Nama Paket *</label>
+              <input class="dm-input" name="packages[0][name]" placeholder="Contoh: Paket Foto Keluarga" required />
+            </div>
+            <div class="dm-field-group">
+              <label class="dm-label">Harga Paket (Rp) *</label>
+              <input type="number" class="dm-input" name="packages[0][price]" placeholder="150000" required />
+            </div>
+            <div class="dm-field-group">
+              <label class="dm-label">Deskripsi Paket</label>
+              <textarea class="dm-textarea" name="packages[0][description]" style="min-height: 60px"
+                placeholder="Deskripsi singkat..."></textarea>
+            </div>
+
+            <div class="dm-grid-row">
+              <div class="dm-field-group">
+                <label class="dm-label">Durasi (Menit) *</label>
+                <input type="number" class="dm-input" name="packages[0][duration]" placeholder="30" required>
+              </div>
+              <div class="dm-field-group">
+                <label class="dm-label">Jeda (Menit)</label>
+                <input type="number" class="dm-input" name="packages[0][break]" placeholder="0" value="0">
+              </div>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="dm-btn-dashed" onclick="addPackage()">
+          + Tambah Paket Lain
+        </button>
+        <div class="dm-footer">
+          <button type="button" class="dm-btn-back" onclick="prevStep()">
+            Kembali
+          </button>
+          <button type="button" class="dm-btn-next" onclick="validateAndNext(this)">
+            Lanjut
+          </button>
+        </div>
+      </section>
+
+      <section class="dm-step">
+        <h2 class="dm-section-title">6. Metode Penerimaan Uang</h2>
+
+        <div
+          style="background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; padding: 12px; border-radius: 8px; font-size: 14px; margin-bottom: 20px;">
+          <strong>Info:</strong> Pilih metode pembayaran yang Anda miliki. Anda bisa memilih salah satu atau keduanya.
+        </div>
+
+        <div class="dm-field-group">
+          <label class="dm-label">Metode Pembayaran Tersedia *</label>
+          <div style="display: flex; gap: 20px; margin-bottom: 15px;">
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" id="chk_bank" onchange="togglePaymentMethods()" checked>
+              <span>Transfer Bank</span>
+            </label>
+            <label style="cursor: pointer; display: flex; align-items: center; gap: 8px;">
+              <input type="checkbox" id="chk_qris" onchange="togglePaymentMethods()">
+              <span>QRIS (E-Wallet)</span>
+            </label>
+          </div>
+        </div>
+
+        <div id="section-bank">
+          <div class="dm-field-group">
+            <label class="dm-label">Nama Bank / E-Wallet *</label>
+            <input class="dm-input bank-req" name="payment_bank_name" placeholder="Contoh: BCA / GoPay / OVO" />
+          </div>
+
+          <div class="dm-grid-row">
+            <div class="dm-field-group">
+              <label class="dm-label">Nomor Rekening / No. HP *</label>
+              <input type="number" class="dm-input bank-req" name="payment_account_number"
+                placeholder="Contoh: 1234567890" />
+            </div>
+            <div class="dm-field-group">
+              <label class="dm-label">Atas Nama *</label>
+              <input class="dm-input bank-req" name="payment_account_holder" placeholder="Nama pemilik rekening" />
+            </div>
+          </div>
+        </div>
+
+        <div id="section-qris" style="display: none; border-top: 1px dashed #ccc; padding-top: 20px; margin-top: 20px;">
+          <div class="dm-field-group">
+            <label class="dm-label">Upload Gambar QRIS *</label>
+            <input type="file" id="qris-input" name="qris_image" class="dm-input qris-req" accept="image/*"
+              onchange="handleQrisUpload(this)" />
+            <small style="color: #666; font-size: 12px; margin-top:5px">Pastikan gambar QRIS jelas agar bisa discan
+              customer.</small>
+
+            <div class="qris-preview-box" id="qris-preview-container">
+              <div class="qris-placeholder">Preview QRIS</div>
+            </div>
+            <button type="button" id="btn-remove-qris"
+              style="display:none; color:red; background:none; border:none; margin-top:5px; cursor:pointer; font-size:13px"
+              onclick="removeQris()">Hapus QRIS</button>
+          </div>
+        </div>
+
+        <div class="dm-footer">
+          <button type="button" class="dm-btn-back" onclick="prevStep()">Kembali</button>
+          <button type="submit" class="dm-btn-next">Selesai & Daftarkan</button>
+        </div>
+      </section>
+    </form>
+  </div>
+
+  <script src="../js/daftar-studio.js" defer></script>
+</body>
+
+</html>

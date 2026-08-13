@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PhotoHunt – Beranda Customer</title>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap");
+
+      :root {
+        --ph-header-height: 100px;
+        --ph-bg-gradient: linear-gradient(180deg, #e0e0e0 0%, #f5f5f5 100%);
+        --ph-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: "Inter", sans-serif;
+        background-color: #ffffff;
+        padding-top: var(--ph-header-height);
+        min-height: 100vh;
+        overflow-x: hidden; /* Mencegah scroll horizontal body */
+      }
+
+      /* --- HEADER --- */
+      .ph-header {
+        background: var(--ph-bg-gradient);
+        height: var(--ph-header-height);
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        box-shadow: var(--ph-shadow);
+        padding: 0 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+
+      .ph-header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 1200px; /* Supaya tidak terlalu lebar di monitor besar */
+      }
+
+      .ph-logo {
+        font-weight: 700;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        color: #000;
+        letter-spacing: -0.02em;
+        text-decoration: none;
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+      }
+
+      .ph-logo:hover {
+        opacity: 0.7;
+      }
+
+      .ph-logo svg {
+        margin-left: 8px;
+        width: 28px;
+        height: 28px;
+      }
+
+      .ph-nav-icons {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+      }
+
+      .ph-nav-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        color: #000;
+        position: relative;
+      }
+
+      .ph-icon-btn {
+        width: 28px;
+        height: 28px;
+        cursor: pointer;
+        stroke: #000;
+        stroke-width: 2;
+        fill: none;
+        transition: all 0.2s ease;
+      }
+
+      .ph-icon-btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.6;
+      }
+
+      .ph-btn-login {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 18px;
+        background-color: #000000;
+        color: #ffffff;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+        border-radius: 20px;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      }
+
+      .ph-btn-login:hover {
+        background-color: #222222;
+        transform: translateY(-1px);
+        color: #ffffff;
+      }
+
+      /* --- INSIDE-CARD SEGMENTED PILL TAB --- */
+      .ph-search-tab-pill {
+        display: flex;
+        background: #f3f4f6;
+        padding: 4px;
+        border-radius: 14px;
+        width: 100%;
+        margin-bottom: 10px;
+        box-sizing: border-box;
+      }
+
+      .ph-pill-option {
+        flex: 1;
+        text-align: center;
+        padding: 12px 16px;
+        font-size: 15px;
+        font-weight: 600;
+        color: #6b7280;
+        cursor: pointer;
+        border-radius: 10px;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        user-select: none;
+      }
+
+      .ph-pill-option.active {
+        background: #ffffff;
+        color: #111827;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .ai-match-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #111827;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+      }
+
+      .ai-reasons-list {
+        margin: 8px 0 12px 0;
+        padding: 0;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 12px;
+      }
+
+      .ai-reason-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .ai-reason-item.match { color: #15803d; font-weight: 500; }
+      .ai-reason-item.partial { color: #b45309; }
+      .ai-reason-item.unmatch { color: #b91c1c; }
+
+      /* --- HERO SECTION & SEARCH --- */
+      .beranda div,
+      .beranda section,
+      .beranda main,
+      .beranda input,
+      .beranda svg,
+      .beranda select {
+        box-sizing: border-box;
+      }
+
+      .hero-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 30px;
+        padding-bottom: 80px; /* Tambah padding bawah untuk tombol search */
+      }
+
+      .search-tabs {
+        display: flex;
+        justify-content: center;
+        gap: 100px;
+        margin-bottom: -1px;
+        position: relative;
+        z-index: 2;
+        width: 90%;
+      }
+
+      .tab-item {
+        font-size: 18px;
+        font-weight: 700;
+        padding-bottom: 10px;
+        cursor: pointer;
+        color: #888;
+        position: relative;
+        transition: color 0.2s;
+        white-space: nowrap;
+      }
+
+      .tab-item.active {
+        color: #000;
+      }
+
+      .tab-item.active::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background-color: #000;
+        border-radius: 2px;
+      }
+
+      .search-box-container {
+        background: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        width: 90%;
+        max-width: 1000px;
+        padding: 30px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-top: 10px;
+      }
+
+      .input-row-full {
+        width: 100%;
+      }
+
+      /* Default desktop: Sebelahan */
+      .input-row-split {
+        display: flex;
+        gap: 20px;
+        width: 100%;
+      }
+
+      .input-field-wrapper {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        height: 60px;
+        width: 100%;
+        transition: border 0.2s;
+      }
+
+      .input-field-wrapper:focus-within {
+        border-color: #000;
+      }
+
+      .input-field-wrapper svg {
+        width: 24px;
+        height: 24px;
+        color: #000;
+        flex-shrink: 0;
+      }
+
+      .input-content {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        justify-content: center;
+        overflow: hidden; /* Mencegah overflow text */
+      }
+
+      .input-content input,
+      .input-content select {
+        border: none;
+        outline: none;
+        font-size: 16px;
+        width: 100%;
+        color: #333;
+        background: transparent;
+        font-family: "Inter", sans-serif;
+      }
+
+      .ph-invisible-input,
+      .ph-invisible-select {
+        font-weight: 600;
+        font-size: 14px;
+        color: #000;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+      }
+
+      .input-sub-text {
+        font-size: 12px;
+        color: #888;
+        margin-top: 2px;
+      }
+
+      .floating-search-btn {
+        position: absolute;
+        bottom: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #1a1a1a;
+        color: white;
+        padding: 12px 30px;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        font-weight: 500;
+        width: auto; /* Biar flexibel */
+        min-width: 200px;
+        justify-content: center; /* Center text */
+        transition: background 0.2s;
+        z-index: 5;
+      }
+
+      .floating-search-btn:hover {
+        background-color: #000;
+      }
+
+      .floating-search-btn svg {
+        width: 20px;
+        height: 20px;
+        stroke: white;
+      }
+
+      /* --- CONTENT SECTION --- */
+      .content-wrapper {
+        max-width: 1200px;
+        margin: 0 auto 40px auto;
+        padding: 0 20px;
+      }
+
+      .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+
+      .city-tabs {
+        display: flex;
+        gap: 30px;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #f0f0f0;
+        /* Tambahan untuk responsif: Scroll samping di HP */
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 2px; /* Ruang untuk scrollbar */
+        scrollbar-width: none; /* Firefox hide scrollbar */
+      }
+      
+      .city-tabs::-webkit-scrollbar {
+        display: none; /* Chrome/Safari hide scrollbar */
+      }
+
+      .city-tab {
+        padding-bottom: 10px;
+        font-size: 16px;
+        color: #666;
+        cursor: pointer;
+        font-weight: 500;
+        position: relative;
+        flex-shrink: 0; /* Jangan menyusut */
+      }
+
+      .city-tab.active {
+        color: #000;
+        font-weight: 700;
+      }
+
+      .city-tab.active::after {
+        content: "";
+        position: absolute;
+        bottom: -2px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: #000;
+      }
+
+      .see-more {
+        margin-left: auto;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+      }
+
+      .studio-grid {
+        display: grid;
+        /* Responsive Grid: Minimal lebar 280px, kalau muat lebih, isi 1fr */
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+        padding-bottom: 50px;
+      }
+
+      .studio-card {
+        cursor: pointer;
+        animation: fadeIn 0.3s ease;
+        transition: transform 0.2s;
+      }
+
+      .studio-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .studio-img {
+        width: 100%;
+        aspect-ratio: 16/9;
+        object-fit: cover;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        background-color: #eee;
+      }
+
+      .studio-name {
+        font-weight: 700;
+        font-size: 16px;
+      }
+
+      /* Notification & Animations */
+      #chat-notif-dot {
+        display: none;
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        width: 12px;
+        height: 12px;
+        background-color: #ff4d4f;
+        border-radius: 50%;
+        border: 2px solid white;
+        z-index: 10;
+      }
+
+      .pulse-animation {
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7); }
+        70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 77, 79, 0); }
+        100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 77, 79, 0); }
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(5px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* ========================================= */
+      /* MOBILE RESPONSIVE MEDIA QUERIES (UPDATED) */
+      /* ========================================= */
+      @media (max-width: 768px) {
+        :root {
+            --ph-header-height: 80px;
+        }
+
+        .ph-header {
+          padding: 0 20px;
+        }
+
+        .ph-logo {
+          font-size: 24px;
+        }
+        
+        .ph-nav-icons {
+            gap: 15px;
+        }
+
+        .ph-icon-btn {
+          width: 24px;
+          height: 24px;
+        }
+
+        /* Tabs Search jadi lebih rapat */
+        .search-tabs {
+            gap: 20px;
+            justify-content: space-around;
+            width: 100%;
+        }
+
+        /* Container Search Padding lebih kecil */
+        .search-box-container {
+            padding: 20px;
+            width: 90%;
+        }
+
+        /* Input Tanggal & Pax jadi atas-bawah (Stack) */
+        .input-row-split {
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* Input Text */
+        .input-field-wrapper {
+            height: auto;
+            min-height: 55px;
+        }
+
+        /* Tombol Search menyesuaikan lebar */
+        .floating-search-btn {
+            width: 80%;
+            justify-content: center;
+        }
+        
+        /* Navigasi Kota scrollable & See More turun ke bawah */
+        .city-tabs {
+            position: relative;
+            padding-right: 20px; /* Biar ujungnya ga kepotong */
+        }
+        
+        /* Sembunyikan 'Lihat Studio Lainnya' di baris tab pada HP */
+        /* Atau bisa kita pindahkan ke bawah grid nanti via JS, tapi di CSS kita hide dulu biar rapi */
+        .see-more {
+            display: none; 
+        }
+
+        /* Grid Studio jadi 1 kolom penuh di HP kecil */
+        .studio-grid {
+            grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="ph-header">
+      <div class="ph-header-content">
+        <div class="ph-logo" onclick="scope.goHome()">
+          PhotoHunt
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+            <circle cx="12" cy="13" r="4"></circle>
+          </svg>
+        </div>
+
+        <div class="ph-nav-icons">
+          <!-- Navigation for Guests (Not logged in) -->
+          <div id="guest-nav" style="display: none; align-items: center; gap: 12px;">
+            <a href="login.html" class="ph-btn-login">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                <polyline points="10 17 15 12 10 7"></polyline>
+                <line x1="15" y1="12" x2="3" y2="12"></line>
+              </svg>
+              Masuk / Daftar
+            </a>
+          </div>
+
+          <!-- Navigation for Logged in Users -->
+          <div id="user-nav" style="display: flex; align-items: center; gap: 24px;">
+            <a href="pengaturan.html" class="ph-nav-link" title="Pengaturan Profile">
+              <svg class="ph-icon-btn" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </a>
+
+            <a href="history.html" class="ph-nav-link" title="Riwayat Booking">
+              <svg class="ph-icon-btn" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </a>
+
+            <a href="chat.html" class="ph-nav-link" style="position: relative;" title="Pesan / Chat"> 
+              <svg class="ph-icon-btn" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+              </svg>
+              <span id="chat-notif-dot" class="pulse-animation"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="beranda">
+      <section class="hero-section">
+        <div class="search-box-container">
+          <!-- Segmented Mode Bar inside Card -->
+          <div class="ph-search-tab-pill">
+            <div class="ph-pill-option active" id="tab-manual" onclick="scope.switchSearchMode('manual')">
+              Manual Search
+            </div>
+            <div class="ph-pill-option" id="tab-ai" onclick="scope.switchSearchMode('ai')">
+              <span style="color: #f59e0b;">✨</span> AI Search
+            </div>
+          </div>
+
+          <!-- MANUAL SEARCH VIEW -->
+          <div id="manual-search-view" style="display: block; width: 100%;">
+            <div class="search-tabs" style="justify-content: center; gap: 40px; margin-bottom: 15px; width: 100%;">
+              <div class="tab-item js-tab-all active" onclick="scope.switchCategory('all')">
+                Semua Tipe
+              </div>
+              <div class="tab-item js-tab-photobox" onclick="scope.switchCategory('photobox')">
+                PhotoBox
+              </div>
+              <div class="tab-item js-tab-photostudio" onclick="scope.switchCategory('photostudio')">
+                PhotoStudio
+              </div>
+            </div>
+
+            <div class="input-row-full" style="margin-bottom: 15px;">
+              <div class="input-field-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <div class="input-content">
+                  <input type="text" class="js-input-location" placeholder="Mau foto dimana?" />
+                </div>
+              </div>
+            </div>
+
+            <div class="input-row-split">
+              <div class="input-field-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <div class="input-content">
+                  <input type="date" class="ph-invisible-input js-input-date" />
+                  <div class="input-sub-text">Tanggal Booking</div>
+                </div>
+              </div>
+
+              <div class="input-field-wrapper">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <div class="input-content">
+                  <select class="ph-invisible-select js-input-pax">
+                    <option value="" selected disabled hidden>Pilih Jumlah Orang</option>
+                    <option value="1">1 Orang</option>
+                    <option value="2">2 Orang</option>
+                    <option value="3">3 Orang</option>
+                    <option value="4">4 Orang</option>
+                    <option value="5">5 Orang</option>
+                    <option value="6">6 - 10 Orang</option>
+                    <option value="10+">Lebih dari 10</option>
+                  </select>
+                  <div class="input-sub-text">Kapasitas</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AI SEARCH VIEW -->
+          <div id="ai-search-view" style="display: none; width: 100%;">
+            <div class="input-field-wrapper" style="height: auto; min-height: 85px; align-items: flex-start; padding: 16px; border-radius: 12px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 24px; height: 24px; color: #f59e0b; margin-top: 4px; flex-shrink: 0;">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              </svg>
+              <div class="input-content" style="width: 100%;">
+                <textarea 
+                  id="ai-prompt-input" 
+                  rows="2" 
+                  placeholder="aku butuh studio untuk hari minggu 3 orang dengan maksimal harga 400k..."
+                  style="width: 100%; border: none; outline: none; font-size: 15px; font-family: 'Inter', sans-serif; color: #333; background: transparent; resize: none; line-height: 1.5;"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Floating Search Button -->
+          <div class="floating-search-btn js-btn-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <span id="search-btn-label">Search...</span>
+          </div>
+        </div>
+      </section>
+
+      <main class="content-wrapper">
+        <div class="section-title">Yuk, cek studio yang cocok denganmu!</div>
+        <div class="city-tabs">
+          <div class="city-tab active" onclick="scope.filterStudio('all', this)">
+            Semua
+          </div>
+          <div class="city-tab" onclick="scope.filterStudio('bekasi', this)">
+            Bekasi
+          </div>
+          <div class="city-tab" onclick="scope.filterStudio('jakarta', this)">
+            Jakarta
+          </div>
+          <div class="city-tab" onclick="scope.filterStudio('tangerang', this)">
+            Tangerang
+          </div>
+          <div class="city-tab" onclick="scope.filterStudio('depok', this)">
+            Depok
+          </div>
+        </div>
+        <div class="studio-grid js-studio-container"></div>
+      </main>
+    </div>
+
+    <script src="js/app-customers.js"></script>
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script src="js/notifications.js"></script>
+  </body>
+</html>

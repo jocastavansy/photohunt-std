@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mitra Cancellations</title>
+  <link rel="stylesheet" href="" />
+
+  <style>
+    :root {
+      --cr-bg: #f8f9fc;
+      --cr-white: #ffffff;
+      --cr-border: #e5e7eb;
+
+      --cr-text-main: #111827;
+      --cr-text-sec: #6b7280;
+
+      --cr-primary: #2b7fff;
+
+      --cr-success-bg: #dcfce7;
+      --cr-success-text: #166534;
+      --cr-success-border: #86efac;
+
+      --cr-danger-bg: #fee2e2;
+      --cr-danger-text: #991b1b;
+
+      --cr-warning-bg: #fff7ed;
+      --cr-warning-text: #c2410c;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", "Segoe UI", sans-serif;
+    }
+
+    body {
+      background-color: var(--cr-bg);
+      color: #333;
+      padding-bottom: 40px;
+    }
+
+    /* === HEADER UTAMA === */
+    .mitra-header {
+      background-color: var(--cr-white);
+      padding: 20px 30px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid #eaeaea;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .mitra-back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .mitra-back-btn:hover {
+      background-color: #f0f0f0;
+    }
+
+    .mitra-back-icon {
+      width: 24px;
+      height: 24px;
+      color: #2d3748;
+    }
+
+    .mitra-header-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    /* === DASHBOARD CONTENT === */
+    .cr-dashboard {
+      background: var(--cr-bg);
+      padding: 20px;
+      color: var(--cr-text-main);
+    }
+
+    .cr-content {
+      max-width: 900px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    /* === TABS === */
+    .cr-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+
+    .cr-tab {
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid var(--cr-border);
+      background: var(--cr-white);
+      font-size: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      color: #333;
+      font-weight: 500;
+    }
+
+    .cr-tab:hover {
+      background-color: #f3f4f6;
+    }
+
+    .cr-tab--active {
+      background: #111827;
+      color: #ffffff;
+      border-color: #111827;
+    }
+
+    .cr-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cr-card {
+      background: var(--cr-white);
+      border: 1px solid var(--cr-border);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      transition: all 0.2s;
+    }
+
+    .cr-card__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 24px;
+      gap: 12px;
+    }
+
+    .cr-card__venue {
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+      color: var(--cr-text-main);
+    }
+
+    .cr-card__submeta {
+      font-size: 13px;
+      color: var(--cr-text-sec);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .cr-badge {
+      font-size: 11px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-weight: 600;
+      display: inline-block;
+      letter-spacing: 0.02em;
+    }
+
+    .cr-badge--pending {
+      background: var(--cr-warning-bg);
+      color: var(--cr-warning-text);
+    }
+
+    .cr-badge--cancelled {
+      background: var(--cr-danger-bg);
+      color: var(--cr-danger-text);
+    }
+
+    /* === GRID LAYOUT 3 KOLOM === */
+    .cr-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .cr-info-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cr-label {
+      font-size: 11px;
+      color: var(--cr-text-sec);
+      font-weight: 600;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .cr-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--cr-text-main);
+    }
+
+    .cr-text-refund {
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .cr-text-hangus {
+      color: var(--cr-danger-text);
+      font-weight: 600;
+    }
+
+    /* === REASON BOX (Abu-abu putus-putus) === */
+    .cr-reason {
+      background: #f9fafb;
+      padding: 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      border: 1px dashed var(--cr-border);
+    }
+
+    .cr-reason__label {
+      font-size: 13px;
+      color: #4b5563;
+      margin-bottom: 0;
+      display: inline;
+    }
+
+    .cr-reason__text {
+      font-size: 13px;
+      color: var(--cr-text-main);
+      font-weight: 500;
+    }
+
+    /* === BANK DETAILS BOX (Hijau putus-putus) === */
+    .cr-bank-details {
+      background: #f0fdf4;
+      border: 1px dashed var(--cr-success-border);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .cr-bank-header {
+      font-size: 12px;
+      color: #15803d;
+      margin-bottom: 8px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    .cr-bank-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .cr-bank-row {
+      font-size: 13px;
+      color: var(--cr-success-text);
+      display: flex;
+    }
+
+    .cr-bank-label {
+      font-weight: 700;
+      width: 110px;
+      flex-shrink: 0;
+    }
+
+    /* === ACTIONS SECTION (NEW) === */
+    .cr-actions {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .cr-actions__prompt {
+      flex: 1;
+    }
+
+    .cr-prompt-text {
+      font-size: 14px;
+      color: var(--cr-text-main);
+      font-weight: 500;
+    }
+
+    .cr-actions__buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .cr-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .cr-btn--approve {
+      background: var(--cr-success-bg);
+      color: var(--cr-success-text);
+      border: 1px solid var(--cr-success-border);
+    }
+
+    .cr-btn--approve:hover {
+      background: #d1fae5;
+      transform: translateY(-1px);
+    }
+
+    /* === FOOTER TIMESTAMP & STATUS === */
+    .cr-timestamp {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-bottom: 12px;
+      margin-left: 2px;
+    }
+
+    .cr-footer-status {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      width: 100%;
+    }
+
+    .cr-status-tag--refunded {
+      background: var(--cr-success-bg);
+      color: var(--cr-success-text);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .loading-msg {
+      text-align: center;
+      padding: 40px;
+      color: #888;
+      font-size: 13px;
+    }
+
+    @media (max-width: 600px) {
+      .cr-info-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .cr-card__header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+
+      .cr-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .cr-actions__buttons {
+        width: 100%;
+      }
+
+      .cr-btn {
+        flex: 1;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mitra-header">
+    <button class="mitra-back-btn" onclick="history.back()" aria-label="Kembali">
+      <svg class="mitra-back-icon" viewBox="0 0 24 24" fill="none">
+        <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </button>
+    <h1 class="mitra-header-title">Pembatalan Reservasi</h1>
+  </div>
+
+  <div class="cr-dashboard">
+    <div class="cr-content">
+      <div class="cr-tabs">
+        <button class="cr-tab cr-tab--active" onclick="filterData('all', this)">
+          Semua
+        </button>
+        <button class="cr-tab" onclick="filterData('pending', this)">
+          Menunggu Proses Refund
+        </button>
+        <button class="cr-tab" onclick="filterData('refunded', this)">
+          Sudah Diproses
+        </button>
+      </div>
+
+      <div class="cr-list" id="data-container">
+        <div class="loading-msg">
+          Memuat data pembatalan...
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/pembatalan-mitra.js"></script>
+</body>
+
+</html>

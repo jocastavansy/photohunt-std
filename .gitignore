@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.*
+
+# Test / development scripts
+backend/check_all_fac.js
+backend/inspect_db.js
+backend/test_fix_verification.js
+backend/test-ai-search.js
+backend/test_time_normalization.js
+backend/fix_refund_amt.js
+
+# Database
+photohunt.gz

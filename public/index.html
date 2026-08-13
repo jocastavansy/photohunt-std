@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Akun - PhotoHunt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .layout-auth-user {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #ffffff;
+        box-sizing: border-box;
+        padding: 40px 20px;
+        font-family: "Inter", sans-serif;
+      }
+      .auth-user {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+      .auth-user * {
+        box-sizing: border-box;
+      }
+      .phlu-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 440px;
+        gap: 24px;
+      }
+      .phlu-header-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+      }
+      .phlu-brand-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+      .phlu-brand {
+        font-family: "Inter", sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: #000;
+        letter-spacing: -0.02em;
+      }
+      .phlu-camera-svg {
+        width: 42px;
+        height: 42px;
+        color: #000;
+      }
+      .phlu-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #000;
+      }
+      .phlu-subtitle {
+        font-size: 16px;
+        color: #000;
+        text-align: center;
+        font-weight: 400;
+      }
+      .phlu-role-container {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        gap: 16px;
+      }
+      .phlu-role {
+        flex: 1;
+        height: 80px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: all 0.2s ease;
+        border: 2px solid transparent;
+      }
+      .phlu-role-user {
+        background-color: #f8f8f8;
+        border: 1px solid #eee;
+      }
+      .phlu-role-user:hover {
+        background-color: #d4d4d4;
+      }
+      .phlu-role-mitra {
+        background-color: #f8f8f8;
+        border: 1px solid #eee;
+      }
+      .phlu-role-mitra:hover {
+        background-color: #f0f0f0;
+      }
+      .phlu-role-label {
+        font-size: 18px;
+        font-weight: 700;
+        color: #000;
+        pointer-events: none;
+      }
+      .phlu-role-svg {
+        width: 32px;
+        height: 32px;
+        pointer-events: none;
+      }
+      /* Class ini nanti ditambah lewat JS kalau tombol diklik */
+      .role-active {
+        border-color: #000 !important;
+        background-color: #e0e0e0 !important;
+      }
+      .phlu-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+      }
+      .phlu-field {
+        width: 100%;
+        height: 48px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        transition: border-color 0.2s;
+      }
+      .phlu-field:focus-within {
+        border-color: #000;
+      }
+      .phlu-input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 16px;
+        font-family: "Inter", sans-serif;
+        color: #000;
+      }
+      .phlu-input::placeholder {
+        color: #828282;
+      }
+      .phlu-button {
+        width: 100%;
+        height: 48px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: opacity 0.2s;
+      }
+      .phlu-login-btn {
+        background: #000000;
+        color: #ffffff;
+        margin-top: 8px;
+      }
+      .phlu-login-btn:hover {
+        opacity: 0.9;
+      }
+      .phlu-signup-btn {
+        background: transparent;
+        border: 1px solid #000;
+        color: #000;
+      }
+      .phlu-signup-btn:hover {
+        background: #f9f9f9;
+      }
+      .phlu-google {
+        background: #eeeeee;
+        color: #000;
+        position: relative;
+        gap: 12px;
+      }
+      .phlu-google-svg {
+        width: 20px;
+        height: 20px;
+      }
+      .phlu-divider {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        gap: 12px;
+        color: #828282;
+        font-size: 14px;
+      }
+      .phlu-divider-line {
+        flex: 1;
+        height: 1px;
+        background-color: #e6e6e6;
+      }
+      .phlu-terms {
+        font-size: 14px;
+        text-align: center;
+        line-height: 1.5;
+        color: #828282;
+        margin-top: 10px;
+      }
+      .phlu-strong {
+        color: #000;
+        font-weight: 600;
+        cursor: pointer;
+      }
+/* ========== MEDIA QUERY UNTUK TABLET & MOBILE ========== */
+@media (max-width: 768px) {
+  .layout-auth-user {
+    padding: 30px 16px;
+  }
+  
+  .phlu-content-wrapper {
+    gap: 20px;
+    max-width: 100%;
+  }
+  
+  .phlu-brand-container {
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  
+  .phlu-brand {
+    font-size: 28px;
+  }
+  
+  .phlu-camera-svg {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .phlu-title {
+    font-size: 24px;
+    margin-bottom: 2px;
+  }
+  
+  .phlu-subtitle {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+  
+  .phlu-role-container {
+    gap: 12px;
+  }
+  
+  .phlu-role {
+    height: 60px; /* DIKECILKAN dari 70px */
+    gap: 6px; /* DIPERKECIL jarak ikon-teks */
+    padding: 0 10px; /* TAMBAHKAN padding */
+  }
+  
+  .phlu-role-label {
+    font-size: 14px; 
+  }
+  
+  .phlu-role-svg {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .phlu-form-group {
+    gap: 14px;
+  }
+  
+  .phlu-field {
+    height: 46px;
+    padding: 0 14px;
+  }
+  
+  .phlu-input {
+    font-size: 15px;
+  }
+  
+  .phlu-button {
+    height: 46px;
+    font-size: 15px;
+  }
+  
+  .phlu-divider {
+    font-size: 13px;
+    gap: 10px;
+  }
+  
+  .phlu-terms {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+}
+      
+    </style>
+  </head>
+
+  <body>
+    <div class="layout-auth-user">
+      <div class="auth-user">
+        <div class="phlu-content-wrapper">
+          <div class="phlu-header-group">
+            <div class="phlu-brand-container">
+              <div class="phlu-brand">PhotoHunt</div>
+              <svg
+                class="phlu-camera-svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7 6C7 4.89543 7.89543 4 9 4H15C16.1046 4 17 4.89543 17 6H20C21.1046 6 22 6.89543 22 8V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V8C2 6.89543 2.89543 6 4 6H7Z"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="13"
+                  r="4"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <div class="phlu-title">Login</div>
+            <div class="phlu-subtitle">
+              Enter your email to login for this app
+            </div>
+          </div>
+
+          <div class="phlu-role-container">
+            <div class="phlu-role phlu-role-user" id="phluRoleUser">
+              <svg
+                class="phlu-role-svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12" cy="12" r="12" fill="#1C1C1C" />
+                <path
+                  d="M12 11C13.6569 11 15 9.65685 15 8C15 6.34315 13.6569 5 12 5C10.3431 5 9 6.34315 9 8C9 9.65685 10.3431 11 12 11Z"
+                  fill="white"
+                />
+                <path
+                  d="M17.8 17.6C17.2 14.8 14.8 12.8 12 12.8C9.2 12.8 6.8 14.8 6.2 17.6C6.1 18.2 6.5 18.8 7.1 18.8H16.9C17.5 18.8 17.9 18.2 17.8 17.6Z"
+                  fill="white"
+                />
+              </svg>
+              <span class="phlu-role-label">Customer</span>
+            </div>
+
+            <div class="phlu-role phlu-role-mitra" id="phluRoleMitra">
+              <svg
+                class="phlu-role-svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M3 9L4.5 4H19.5L21 9"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M3 9V19C3 19.5523 3.44772 20 4 20H20C20.5523 20 21 19.5523 21 19V9"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M3 9H21"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M8 14H16"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M12 14V20"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="phlu-role-label">Mitra</span>
+            </div>
+          </div>
+
+          <div class="phlu-form-group">
+            <div class="phlu-field">
+              <input
+                type="email"
+                id="phluEmail"
+                class="phlu-input"
+                placeholder="email@domain.com"
+              />
+            </div>
+            <div class="phlu-field">
+              <input
+                type="password"
+                id="phluPassword"
+                class="phlu-input"
+                placeholder="Password"
+              />
+            </div>
+          </div>
+
+          <div class="phlu-button phlu-login-btn" id="phluLoginBtn">Login</div>
+
+          <div class="phlu-divider">
+            <div class="phlu-divider-line"></div>
+            <div>DON'T HAVE AN ACCOUNT?</div>
+            <div class="phlu-divider-line"></div>
+          </div>
+
+          <div class="phlu-button phlu-signup-btn">Sign up with email</div>
+
+          <div class="phlu-divider">
+            <div class="phlu-divider-line"></div>
+            <div>or continue with</div>
+            <div class="phlu-divider-line"></div>
+          </div>
+
+          <div class="phlu-button phlu-google">
+            <svg class="phlu-google-svg" viewBox="0 0 48 48">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <div>Google</div>
+          </div>
+
+          <div class="phlu-terms">
+            By clicking continue, you agree to our<br />
+            <span class="phlu-strong">Terms of Service</span> and
+            <span class="phlu-strong">Privacy Policy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/login.js" defer></script>
+  </body>
+</html>

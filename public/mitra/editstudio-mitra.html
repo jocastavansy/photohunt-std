@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Edit Studio</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="../style.css" />
+
+  <style>
+    .mitra-facility-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      background: #fff;
+    }
+
+    .mitra-add-facility {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .mitra-add-facility input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .mitra-add-facility button {
+      width: 36px;
+      height: 36px;
+      background: #111827;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .mitra-add-facility button:hover {
+      background: #000;
+    }
+
+    .mitra-facility-item input {
+      flex: 1;
+      margin: 0 !important;
+    }
+
+    /* Tombol Sampah */
+    .btn-trash {
+      width: 36px;
+      height: 36px;
+      border: 1px solid #fee2e2;
+      background-color: #fff;
+      color: #ef4444;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .btn-trash:hover {
+      background-color: #fee2e2;
+      color: #dc2626;
+      border-color: #fca5a5;
+    }
+
+    .btn-trash svg {
+      width: 18px;
+      height: 18px;
+      stroke-width: 2;
+    }
+
+    /* Gallery Grid */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .gallery-item {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #e5e7eb;
+      background: #f9fafb;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .btn-delete-img {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 22px;
+      height: 22px;
+      background: rgba(220, 38, 38, 0.9);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .btn-upload-dashed {
+      width: 100%;
+      padding: 12px;
+      border: 2px dashed #d1d5db;
+      background: #f9fafb;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #6b7280;
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .btn-upload-dashed:hover {
+      border-color: #000;
+      color: #000;
+      background: #fff;
+    }
+
+    /* --- CSS BARU: TABLE JADWAL --- */
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .schedule-table th {
+      text-align: left;
+      padding: 8px 4px;
+      color: #6b7280;
+      font-weight: 500;
+      font-size: 12px;
+    }
+
+    .schedule-table td {
+      padding: 6px 4px;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .schedule-table input[type="time"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-family: inherit;
+    }
+
+    .schedule-table input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      accent-color: #ef4444;
+    }
+
+    .day-label {
+      font-weight: 600;
+      text-transform: capitalize;
+      color: #374151;
+    }
+
+    /* Disabled state buat input waktu kalau tutup */
+    .schedule-row.closed input[type="time"] {
+      background-color: #f3f4f6;
+      color: #9ca3af;
+      pointer-events: none;
+      border-color: #e5e7eb;
+    }
+
+    .schedule-row.closed .day-label {
+      color: #9ca3af;
+      text-decoration: line-through;
+    }
+
+    .mitra-edit-modal {
+      width: 95% !important;
+      max-width: 900px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mitra-edit-page">
+    <div class="mitra-edit-backdrop" id="editStudioModal">
+      <div class="mitra-edit-modal">
+        <div class="mitra-edit-header">
+          <div class="mitra-edit-title" id="studioTitle">Edit Studio</div>
+          <button class="mitra-edit-close" id="closeEditModal">✕</button>
+        </div>
+
+        <div class="mitra-edit-body">
+          <div id="loadingIndicator" style="text-align: center; padding: 30px; color: #888">
+            ⏳ Memuat data...
+          </div>
+
+          <div id="formContent" style="
+                display: none;
+                max-height: 80vh;
+                overflow-y: auto;
+                padding-right: 5px;
+              ">
+            <div class="mitra-form-group" style="text-align: center; margin-bottom: 20px">
+              <div style="
+                    position: relative;
+                    width: 100px;
+                    height: 100px;
+                    margin: 0 auto 10px;
+                  ">
+                <img id="editLogoPreview" src="https://placehold.co/100x100?text=No+Logo" style="
+                      width: 100%;
+                      height: 100%;
+                      object-fit: cover;
+                      border-radius: 50%;
+                      border: 1px solid #e5e7eb;
+                      background: #fff;
+                    " />
+
+                <button type="button" id="btnChangeLogo" style="
+                      position: absolute;
+                      bottom: 0;
+                      right: 0;
+                      background: #000;
+                      color: #fff;
+                      border: none;
+                      border-radius: 50%;
+                      width: 32px;
+                      height: 32px;
+                      cursor: pointer;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+                    ">
+                  ✎
+                </button>
+              </div>
+
+              <input type="file" id="editLogoInput" accept="image/*" style="display: none" />
+
+              <small style="color: #6b7280; font-size: 12px">Klik ikon pensil untuk ubah logo studio ini.</small>
+            </div>
+            <div class="mitra-form-group">
+              <label>Nama Studio</label>
+              <input type="text" id="studioName" placeholder="Nama Studio" />
+            </div>
+            <div class="mitra-form-group">
+              <label>Deskripsi</label>
+              <textarea rows="3" id="studioDescription" placeholder="Deskripsi Studio"></textarea>
+            </div>
+            <div class="mitra-form-group">
+              <label>Range Harga</label>
+              <input type="text" id="studioPrice" placeholder="Rp 50.000 - Rp 100.000" />
+            </div>
+
+            <div class="mitra-form-group">
+              <label>Link Google Maps</label>
+              <input type="text" id="studioGmapsLink" placeholder="Contoh: https://maps.app.goo.gl/..." />
+              <small style="color: #6b7280; font-size: 11px">
+                Paste link dari tombol 'Share' Google Maps agar pelanggan
+                mudah menemukan lokasi.
+              </small>
+            </div>
+
+            <!-- PAYMENT DETAILS SECTION -->
+            <div class="mitra-form-group" style="
+                  margin-top: 20px;
+                  border-top: 1px solid #f0f0f0;
+                  padding-top: 15px;
+                ">
+              <label style="margin-bottom:15px; display:block; font-weight:600;">Detail Pembayaran</label>
+
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:15px;">
+                <div>
+                  <label style="font-size:13px; color:#555;">Nama Bank / E-Wallet</label>
+                  <input type="text" id="paymentBankName" placeholder="Contoh: BCA / GoPay"
+                    style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px;">
+                </div>
+                <div>
+                  <label style="font-size:13px; color:#555;">Nomor Rekening</label>
+                  <input type="text" id="paymentAccNumber" placeholder="12345678"
+                    style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px;">
+                </div>
+              </div>
+              <div style="margin-bottom:15px;">
+                <label style="font-size:13px; color:#555;">Atas Nama</label>
+                <input type="text" id="paymentAccHolder" placeholder="Nama Pemilik Rekening"
+                  style="width:100%; padding:10px; border:1px solid #d1d5db; border-radius:8px;">
+              </div>
+
+              <!-- QRIS SECTION -->
+              <div style="display:flex; align-items:center; gap:20px;">
+                <div
+                  style="width:100px; height:100px; border:1px dashed #ccc; border-radius:8px; overflow:hidden; background:#f9fafb; display:flex; justify-content:center; align-items:center;">
+                  <img id="qrisPreview" src="" style="width:100%; height:100%; object-fit:contain; display:none;">
+                  <span id="qrisPlaceholder" style="font-size:10px; color:#999;">No QRIS</span>
+                </div>
+                <div>
+                  <label style="font-size:13px; color:#555; display:block; margin-bottom:5px;">QRIS Image</label>
+                  <button type="button" id="btnChangeQris" class="btn-upload-dashed"
+                    style="padding:8px 15px; width:auto;">
+                    Ganti QRIS
+                  </button>
+                  <input type="file" id="editQrisInput" accept="image/*" style="display:none;">
+                  <small style="display:block; font-size:11px; color:#888; margin-top:5px;">Format: JPG/PNG</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="mitra-form-group" style="
+                  margin-top: 20px;
+                  border-top: 1px solid #f0f0f0;
+                  padding-top: 15px;
+                ">
+              <label>Jadwal Operasional</label>
+              <table class="schedule-table">
+                <thead>
+                  <tr>
+                    <th style="width: 25%">Hari</th>
+                    <th style="width: 30%">Buka</th>
+                    <th style="width: 30%">Tutup</th>
+                    <th style="width: 15%; text-align: center">Libur?</th>
+                  </tr>
+                </thead>
+                <tbody id="scheduleList"></tbody>
+              </table>
+            </div>
+
+            <div class="mitra-form-group" style="
+                  margin-top: 20px;
+                  border-top: 1px solid #f0f0f0;
+                  padding-top: 15px;
+                ">
+              <label>Galeri Foto (Maks. 10)</label>
+              <div style="font-size: 11px; color: #666; margin-bottom: 8px">
+                <span id="photoCounter">0</span>/10 Foto terupload.
+              </div>
+              <div id="galleryContainer" class="gallery-grid"></div>
+              <div id="uploadBox">
+                <input type="file" id="newPhotoInput" accept="image/*" multiple hidden />
+                <button type="button" id="btnSelectPhoto" class="btn-upload-dashed">
+                  + Tambah Foto
+                </button>
+              </div>
+              <div id="uploadLimitMsg" style="
+                    display: none;
+                    color: #ef4444;
+                    font-size: 12px;
+                    margin-top: 5px;
+                  ">
+                Kuota foto penuh. Hapus foto lama untuk menambah baru.
+              </div>
+            </div>
+
+            <div class="mitra-form-group" style="margin-top: 20px; border-top: 1px solid #f0f0f0; padding-top: 15px;">
+              <label>Paket Studio</label>
+              <div id="packageList"></div>
+              <button type="button" id="addPackageBtn" class="btn-upload-dashed" style="margin-top: 10px;">
+                + Tambah Paket Baru
+              </button>
+            </div>
+
+            <div class="mitra-form-group" style="margin-top: 20px; border-top: 1px solid #f0f0f0; padding-top: 15px;">
+              <label>Fasilitas Studio</label>
+              <div id="facilityList"></div>
+            </div>
+            <div class="mitra-add-facility">
+              <input type="text" id="newFacilityInput" placeholder="Tambah fasilitas baru..." />
+              <button type="button" id="addFacilityBtn">＋</button>
+            </div>
+
+            <div class="mitra-edit-footer">
+              <button type="button" class="mitra-btn-cancel" id="cancelEdit">
+                Batal
+              </button>
+              <button type="button" class="mitra-btn-save" id="saveEdit">
+                Simpan Perubahan
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/editstudio-mitra.js" defer></script>
+</body>
+
+</html>

@@ -1,0 +1,1703 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Studio - PhotoHunt</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://img.icons8.com/color/48/000000/camera.png"
+    />
+
+    <style>
+      :root {
+        --ds-header-height: 100px;
+        --ds-black: #000000;
+        --ds-white: #ffffff;
+        --ds-bg-dark: #000000; /* Header Hitam Pekat */
+        --ds-border: #222222; /* Border Hitam */
+        --ds-text-dark: #101828;
+        --ds-text-med: #4a5565;
+        --ds-text-light: #9ca3af;
+        --ds-border-light: #e5e7eb;
+        --ds-bg-light: #f9fafb;
+        --ds-bg-lighter: #f3f4f6;
+        --ds-success: #10b981;
+        --ds-warning: #f59e0b;
+        --ds-error: #ef4444;
+        --ds-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        --ds-radius-sm: 10px;
+        --ds-radius-md: 12px;
+        --ds-radius-lg: 14px;
+        --ds-radius-xl: 16px;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Arimo", sans-serif;
+        background-color: var(--ds-white);
+        color: var(--ds-text-dark);
+        padding-top: var(--ds-header-height);
+        line-height: 1.6;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      /* --- HEADER DARK MODE STYLE (UPDATED) --- */
+      .ds-header {
+        background: #000000; /* FIX: Header Hitam Pekat */
+        height: var(--ds-header-height);
+        width: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 1000;
+        padding: 0 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        border-bottom: 1px solid #222222;
+        color: var(--ds-white);
+      }
+
+      .ds-nav-btn {
+        width: 50px;
+        height: 50px;
+        background: #18181b;
+        border: 1px solid #27272a;
+        border-radius: var(--ds-radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+      }
+
+      .ds-nav-btn:hover {
+        border-color: #52525b;
+        background: #27272a;
+        transform: scale(1.05);
+      }
+
+      .ds-nav-btn svg {
+        width: 24px;
+        height: 24px;
+        stroke: var(--ds-white); /* Icon Putih */
+      }
+
+      .ds-header-search {
+        flex: 1;
+        max-width: 100%;
+        height: 50px;
+        background: #18181b;
+        border: 1px solid #27272a;
+        border-radius: var(--ds-radius-md);
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        transition: all 0.2s ease;
+      }
+
+      .ds-header-search:hover {
+        border-color: #52525b;
+      }
+
+      .ds-header-search svg {
+        width: 20px;
+        height: 20px;
+        stroke: var(--ds-text-light);
+      }
+
+      .ds-search-input {
+        background: transparent;
+        border: none;
+        color: var(--ds-white); /* Teks Ketikan Putih */
+        font-family: "Inter", sans-serif;
+        font-size: 16px;
+        width: 100%;
+        outline: none;
+        height: 100%;
+      }
+
+      .ds-search-input::placeholder {
+        color: var(--ds-text-light);
+      }
+
+      .ds-header-filter {
+        height: 50px;
+        background: #18181b;
+        border: 1px solid #27272a;
+        border-radius: var(--ds-radius-md);
+        padding: 0 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        color: var(--ds-white); /* Teks Filter Putih */
+        font-family: "Inter", sans-serif;
+        font-size: 15px;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        position: relative;
+        transition: all 0.2s ease;
+      }
+
+      .ds-header-filter:hover {
+        border-color: #52525b;
+      }
+
+      .ds-header-filter svg {
+        width: 20px;
+        height: 20px;
+        stroke: var(--ds-white); /* Icon Filter Putih */
+      }
+
+      /* Profile Button Special Fix */
+      #profileBtn svg {
+        stroke: var(--ds-white);
+        fill: none;
+      }
+      /* --- END HEADER STYLE --- */
+
+      .ds-filter-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 10;
+      }
+
+      .ds-container {
+        width: 100%;
+        padding: 24px 40px;
+      }
+
+      .ds-gallery {
+        display: flex;
+        gap: 24px;
+        width: 100%;
+        height: 600px;
+        margin-bottom: 24px;
+      }
+
+      .ds-main-photo {
+        flex: 3;
+        background: var(--ds-black);
+        border-radius: var(--ds-radius-xl);
+        overflow: hidden;
+        position: relative;
+        height: 100%;
+      }
+
+      .ds-main-photo img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 0.3s ease;
+      }
+
+      .ds-photo-counter {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        color: var(--ds-white);
+        font-size: 14px;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 4px 12px;
+        border-radius: 20px;
+      }
+
+      .ds-nav-arrow {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 10;
+        transition: all 0.3s;
+      }
+
+      .ds-nav-arrow:hover {
+        background: rgba(0, 0, 0, 0.8);
+        transform: translateY(-50%) scale(1.1);
+      }
+
+      .ds-nav-arrow.prev {
+        left: 20px;
+      }
+
+      .ds-nav-arrow.next {
+        right: 20px;
+      }
+
+      .ds-nav-arrow svg {
+        width: 24px;
+        height: 24px;
+        stroke: var(--ds-white);
+      }
+
+      .ds-thumbnail-grid {
+        flex: 1;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: repeat(3, 1fr);
+        gap: 10px;
+        height: 100%;
+      }
+
+      .ds-thumbnail {
+        border-radius: var(--ds-radius-lg);
+        border: 1.2px solid var(--ds-border-light);
+        padding: 1.78px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+      }
+
+      .ds-thumbnail:hover {
+        border-color: var(--ds-black);
+        transform: scale(1.02);
+      }
+
+      .ds-thumbnail.active {
+        border-color: var(--ds-black);
+        box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.2);
+      }
+
+      .ds-thumbnail img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: calc(var(--ds-radius-lg) - 2px);
+      }
+
+      .ds-tabs {
+        display: flex;
+        border-bottom: 1px solid var(--ds-border-light);
+        margin-bottom: 24px;
+      }
+
+      .ds-tab-btn {
+        padding: 16px 24px;
+        background: none;
+        border: none;
+        color: var(--ds-text-light);
+        font-family: "Arimo", sans-serif;
+        font-size: 14px;
+        cursor: pointer;
+        position: relative;
+        transition: color 0.3s ease;
+      }
+
+      .ds-tab-btn:hover {
+        color: var(--ds-text-dark);
+      }
+
+      .ds-tab-btn.active {
+        color: var(--ds-black);
+        font-weight: 700;
+      }
+
+      .ds-tab-btn.active::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 2px;
+        background: var(--ds-black);
+      }
+
+      .ds-content-wrapper {
+        display: flex;
+        gap: 40px;
+        width: 100%;
+      }
+
+      .ds-main-info {
+        flex: 2;
+        padding-right: 40px;
+        border-right: 1px solid var(--ds-border-light);
+      }
+
+      .ds-booking-sidebar {
+        flex: 1;
+        max-width: 400px;
+        min-width: 320px;
+      }
+
+      .ds-title {
+        font-family: "Arimo", sans-serif;
+        font-size: 30px;
+        font-weight: 700;
+        color: var(--ds-black);
+        margin-bottom: 12px;
+        line-height: 1.2;
+      }
+
+      .ds-section-title {
+        font-family: "Arimo", sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--ds-black);
+        margin-bottom: 20px;
+      }
+
+      .ds-subsection-title {
+        font-family: "Arimo", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--ds-black);
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .ds-card-title {
+        font-family: "Arimo", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        color: var(--ds-black);
+        margin-bottom: 12px;
+      }
+
+      .ds-body-text {
+        font-family: "Arimo", sans-serif;
+        font-size: 16px;
+        color: var(--ds-text-med);
+        margin-bottom: 12px;
+        line-height: 1.5;
+      }
+
+      .ds-small-text {
+        font-family: "Arimo", sans-serif;
+        font-size: 14px;
+        color: var(--ds-text-light);
+        line-height: 1.4;
+      }
+
+      .ds-facilities-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .ds-facility-card {
+        border-radius: var(--ds-radius-sm);
+        border: 1px solid var(--ds-border-light);
+        padding: 16px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        transition: all 0.3s ease;
+      }
+
+      .ds-facility-card:hover {
+        border-color: var(--ds-black);
+        transform: translateY(-2px);
+        box-shadow: var(--ds-shadow);
+      }
+
+      .ds-facility-icon {
+        display: none;
+      }
+
+      .ds-hours-card {
+        border-radius: var(--ds-radius-sm);
+        border: 1px solid var(--ds-border-light);
+        padding: 20px;
+        margin-bottom: 24px;
+      }
+
+      .ds-hour-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .ds-status-indicator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 12px;
+        padding-top: 12px;
+        border-top: 1px solid var(--ds-border-light);
+      }
+
+      .ds-status-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--ds-success);
+        border-radius: 50%;
+      }
+
+      .ds-sidebar-section {
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--ds-border-light);
+      }
+
+      .ds-sidebar-section:last-child {
+        border-bottom: none;
+      }
+
+      .ds-rating-badge {
+        background: var(--ds-black);
+        color: var(--ds-white);
+        padding: 8px 12px;
+        border-radius: var(--ds-radius-sm);
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-bottom: 12px;
+      }
+
+      .ds-info-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+
+      .ds-info-row svg {
+        width: 16px;
+        height: 16px;
+        stroke: var(--ds-text-med);
+      }
+
+      .ds-packages-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      .ds-package-card {
+        border-radius: var(--ds-radius-lg);
+        border: 1.2px solid var(--ds-border-light);
+        padding: 25px;
+        background: var(--ds-white);
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .ds-package-card:hover {
+        border: 1.2px solid var(--ds-black);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .ds-package-card.popular {
+        background: var(--ds-bg-light);
+        border-color: var(--ds-black);
+      }
+
+      .ds-package-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+      }
+
+      .ds-package-name {
+        font-family: "Arimo", sans-serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--ds-black);
+      }
+
+      .ds-popular-badge {
+        background: var(--ds-black);
+        color: var(--ds-white);
+        padding: 4px 12px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .ds-package-price {
+        font-family: "Arimo", sans-serif;
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--ds-black);
+        margin-bottom: 8px;
+      }
+
+      .ds-package-duration {
+        color: var(--ds-text-med);
+        font-size: 14px;
+        margin-bottom: 20px;
+      }
+
+      .ds-features-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .ds-feature-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .ds-feature-item svg {
+        width: 16px;
+        height: 16px;
+        stroke: var(--ds-text-dark);
+        stroke-width: 3;
+      }
+
+      .ds-rating-summary {
+        background: var(--ds-bg-light);
+        border-radius: var(--ds-radius-lg);
+        border: 1.2px solid var(--ds-border-light);
+        padding: 25px;
+        display: flex;
+        gap: 40px;
+        margin-bottom: 24px;
+      }
+
+      .ds-overall-rating {
+        text-align: center;
+        min-width: 136px;
+      }
+
+      .ds-rating-number {
+        font-family: "Arimo", sans-serif;
+        font-size: 60px;
+        font-weight: 700;
+        color: var(--ds-black);
+      }
+
+      .ds-rating-stars {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        margin: 8px 0;
+      }
+
+      .ds-rating-stars svg {
+        width: 20px;
+        height: 20px;
+        fill: var(--ds-black);
+        stroke: var(--ds-black);
+      }
+
+      .ds-rating-bars {
+        flex: 1;
+      }
+
+      .ds-rating-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .ds-bar-container {
+        flex: 1;
+        background: #d1d5dc;
+        border-radius: 100px;
+        height: 10px;
+        overflow: hidden;
+      }
+
+      .ds-bar-fill {
+        background: var(--ds-black);
+        height: 100%;
+        border-radius: 100px;
+      }
+
+      .ds-review-card {
+        background: var(--ds-white);
+        border-radius: var(--ds-radius-lg);
+        border: 1.2px solid var(--ds-border-light);
+        padding: 25px;
+        margin-bottom: 16px;
+      }
+
+      .ds-review-header {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 20px;
+      }
+
+      .ds-reviewer-avatar {
+        background: var(--ds-black);
+        color: var(--ds-white);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        flex-shrink: 0;
+      }
+
+      .ds-reviewer-info {
+        flex: 1;
+      }
+
+      .ds-review-meta {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .ds-review-date {
+        color: var(--ds-text-med);
+        font-size: 12px;
+      }
+
+      .ds-review-content {
+        color: var(--ds-text-dark);
+        font-size: 16px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      .ds-review-helpful {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding-top: 12px;
+        border-top: 1px solid var(--ds-border-light);
+      }
+
+      .ds-btn-primary {
+        background: var(--ds-black);
+        color: var(--ds-white);
+        border: none;
+        border-radius: var(--ds-radius-lg);
+        padding: 16px;
+        width: 100%;
+        font-family: "Arimo", sans-serif;
+        font-size: 18px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity 0.3s;
+        margin-bottom: 24px;
+      }
+
+      .ds-btn-primary:hover {
+        opacity: 0.9;
+      }
+
+      .ds-btn-secondary {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        width: 100%;
+        padding: 12px;
+        border-radius: var(--ds-radius-sm);
+        border: 1.2px solid #d1d5dc;
+        background: var(--ds-white);
+        font-family: "Arimo", sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-bottom: 12px;
+        transition: all 0.3s;
+      }
+
+      .ds-btn-secondary:hover {
+        background: var(--ds-bg-lighter);
+      }
+
+      .ds-btn-whatsapp {
+        background: var(--ds-black);
+        color: var(--ds-white);
+        border: none;
+      }
+
+      .ds-btn-whatsapp:hover {
+        background: #075e54;
+      }
+
+      .ds-map-placeholder {
+        background: var(--ds-bg-lighter);
+        border-radius: var(--ds-radius-sm);
+        border: 1.2px solid var(--ds-border-light);
+        height: 160px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-bottom: 24px;
+        cursor: pointer;
+      }
+
+      .ds-map-placeholder:hover {
+        background: var(--ds-bg-light);
+      }
+
+      .ds-notification-dot {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 8px;
+        height: 8px;
+        background: var(--ds-white);
+        border-radius: 50%;
+      }
+
+      .ds-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+
+      .ds-modal.hidden {
+        display: none;
+      }
+
+      .ds-modal-content {
+        background: white;
+        border-radius: var(--ds-radius-lg);
+        width: 90%;
+        max-width: 500px;
+        box-shadow: var(--ds-shadow);
+      }
+
+      .ds-modal-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--ds-border-light);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .ds-modal-header h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        color: var(--ds-black);
+      }
+
+      .ds-close-modal {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--ds-text-med);
+      }
+
+      .ds-modal-body {
+        padding: 20px;
+      }
+
+      .ds-modal-body input[type="date"] {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--ds-border-light);
+        border-radius: var(--ds-radius-sm);
+        font-size: 16px;
+        font-family: "Inter", sans-serif;
+      }
+
+      .ds-modal-footer {
+        padding: 20px;
+        border-top: 1px solid var(--ds-border-light);
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+
+      /* UTILITY */
+      .hidden {
+        display: none !important;
+      }
+
+      .ds-error-message {
+        background: #fef2f2;
+        border: 1.2px solid #fecaca;
+        border-radius: var(--ds-radius-sm);
+        padding: 16px;
+        color: #dc2626;
+        margin-bottom: 16px;
+      }
+
+      .ds-success-message {
+        background: #f0fdf4;
+        border: 1.2px solid #bbf7d0;
+        border-radius: var(--ds-radius-sm);
+        padding: 16px;
+        color: #16a34a;
+        margin-bottom: 16px;
+      }
+      /* Jadwal per hari */
+.ds-schedule-table {
+    width: 100%;
+    font-size: 14px;
+    border-collapse: collapse;
+}
+
+.ds-schedule-table tr {
+    border-bottom: 1px dashed var(--ds-border-light);
+}
+
+.ds-schedule-table tr:last-child {
+    border-bottom: none;
+}
+
+.ds-schedule-table td {
+    padding: 12px 0;
+    color: var(--ds-text-med);
+}
+
+.ds-schedule-table td:first-child {
+    font-weight: 600;
+    color: var(--ds-text-dark);
+    text-transform: capitalize;
+    width: 120px;
+}
+
+.ds-schedule-table td:last-child {
+    text-align: right;
+    font-weight: 600;
+}
+
+.ds-schedule-time {
+    color: var(--ds-text-dark);
+}
+
+.ds-schedule-closed {
+    background-color: #fee2e2;
+    color: var(--ds-error);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    display: inline-block;
+}
+
+.ds-schedule-today {
+    background-color: rgba(16, 185, 129, 0.1);
+    border-radius: 6px;
+}
+
+.ds-schedule-today td:first-child {
+    color: var(--ds-success);
+    font-weight: 700;
+}
+
+.ds-schedule-today .ds-schedule-time {
+    color: var(--ds-success);
+    font-weight: 700;
+}
+
+      /* ==================== */
+      /* IPHONE 14 PLUS RESPONSIVE - 428x926 viewport */
+      /* ==================== */
+
+      /* MOBILE: iPhone 14 Plus dan sejenis (max-width: 428px) */
+      @media (max-width: 428px) {
+        /* Body dan Header */
+        body {
+          padding-top: 120px;
+        }
+
+        .ds-header {
+          height: auto;
+          min-height: 70px;
+          padding: 10px 15px;
+          flex-wrap: wrap;
+          gap: 10px;
+        }
+
+        /* Header layout untuk mobile */
+        .ds-nav-btn {
+          width: 44px;
+          height: 44px;
+          order: 1;
+        }
+
+        #profileBtn {
+          order: 2;
+        }
+
+        .ds-header-search {
+          order: 3;
+          width: 100%;
+          margin-top: 5px;
+          height: 44px;
+        }
+
+        #dateFilter {
+          order: 4;
+          flex: 1;
+          height: 44px;
+          padding: 0 12px;
+          font-size: 14px;
+        }
+
+        #peopleFilter {
+          order: 5;
+          flex: 1;
+          height: 44px;
+          padding: 0 12px;
+          font-size: 14px;
+        }
+
+        /* Container */
+        .ds-container {
+          padding: 15px;
+        }
+
+        /* Gallery - iPhone 14 Plus */
+        .ds-gallery {
+          flex-direction: column;
+          height: auto;
+          margin-bottom: 20px;
+        }
+
+        .ds-main-photo {
+          height: 320px; /* Tinggi optimal untuk iPhone */
+          margin-bottom: 10px;
+        }
+
+        .ds-thumbnail-grid {
+          grid-template-columns: repeat(2, 1fr);
+          grid-template-rows: repeat(3, 110px);
+          gap: 8px;
+        }
+
+        /* Photo counter dan arrows */
+        .ds-photo-counter {
+          font-size: 13px;
+          bottom: 15px;
+          left: 15px;
+          padding: 3px 10px;
+        }
+
+        .ds-nav-arrow {
+          width: 40px;
+          height: 40px;
+        }
+
+        .ds-nav-arrow svg {
+          width: 20px;
+          height: 20px;
+        }
+
+        /* Tabs - horizontal scroll untuk mobile */
+        .ds-tabs {
+          overflow-x: auto;
+          white-space: nowrap;
+          -webkit-overflow-scrolling: touch;
+          padding-bottom: 5px;
+          margin-bottom: 20px;
+        }
+
+        .ds-tabs::-webkit-scrollbar {
+          display: none;
+        }
+
+        .ds-tab-btn {
+          padding: 14px 18px;
+          font-size: 14px;
+          display: inline-block;
+        }
+
+        /* Content wrapper */
+        .ds-content-wrapper {
+          flex-direction: column;
+          gap: 25px;
+        }
+
+        .ds-main-info {
+          border-right: none;
+          padding-right: 0;
+        }
+
+        .ds-booking-sidebar {
+          max-width: 100%;
+          min-width: unset;
+          background: var(--ds-white);
+          border: 1px solid var(--ds-border-light);
+          border-radius: var(--ds-radius-lg);
+          padding: 20px;
+          box-shadow: var(--ds-shadow);
+        }
+
+        /* Typography untuk mobile */
+        .ds-title {
+          font-size: 24px;
+          line-height: 1.3;
+        }
+
+        .ds-section-title {
+          font-size: 20px;
+          margin-bottom: 18px;
+        }
+
+        .ds-subsection-title {
+          font-size: 17px;
+          margin-bottom: 15px;
+        }
+
+        .ds-body-text {
+          font-size: 15px;
+        }
+
+        .ds-small-text {
+          font-size: 13px;
+        }
+
+        /* Facilities grid */
+        .ds-facilities-grid {
+          grid-template-columns: 1fr;
+          gap: 12px;
+        }
+
+        .facilities-grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+        }
+
+        .facility-item {
+          padding: 10px 12px;
+          font-size: 14px;
+        }
+
+        /* Packages */
+        .ds-packages-grid {
+          gap: 16px;
+        }
+
+        .ds-package-card {
+          padding: 20px;
+        }
+
+        .ds-package-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+          margin-bottom: 18px;
+        }
+
+        .ds-package-name {
+          font-size: 20px;
+        }
+
+        .ds-package-price {
+          font-size: 28px;
+        }
+
+        .ds-package-duration {
+          font-size: 13px;
+        }
+
+        .ds-features-list {
+          gap: 8px;
+        }
+
+        .ds-feature-item {
+          font-size: 14px;
+        }
+
+        /* Rating */
+        .ds-rating-summary {
+          flex-direction: column;
+          gap: 20px;
+          padding: 20px;
+        }
+
+        .ds-overall-rating {
+          min-width: unset;
+        }
+
+        .ds-rating-number {
+          font-size: 46px;
+        }
+
+        .ds-rating-stars svg {
+          width: 18px;
+          height: 18px;
+        }
+
+        /* Reviews */
+        .ds-review-card {
+          padding: 20px;
+        }
+
+        .ds-review-header {
+          flex-direction: row;
+          align-items: flex-start;
+          gap: 12px;
+        }
+
+        .ds-reviewer-avatar {
+          width: 44px;
+          height: 44px;
+          font-size: 17px;
+        }
+
+        .ds-review-content {
+          font-size: 15px;
+        }
+
+        /* Buttons */
+        .ds-btn-primary {
+          padding: 15px;
+          font-size: 17px;
+          margin-bottom: 20px;
+        }
+
+        .ds-btn-secondary {
+          padding: 12px;
+          font-size: 15px;
+        }
+
+        /* Hours card */
+        .ds-hours-card {
+          padding: 18px;
+        }
+
+        .ds-hour-row {
+          flex-direction: column;
+          gap: 4px;
+          margin-bottom: 10px;
+        }
+
+        .ds-status-indicator {
+          margin-top: 10px;
+          padding-top: 10px;
+        }
+
+        /* Map placeholder */
+        .ds-map-placeholder {
+          height: 140px;
+        }
+      }
+
+      /* iPhone 14 Plus dalam mode landscape */
+      @media (max-width: 926px) and (min-height: 428px) and (orientation: landscape) {
+        .ds-header {
+          height: 60px;
+          padding: 5px 15px;
+        }
+
+        body {
+          padding-top: 70px;
+        }
+
+        .ds-main-photo {
+          height: 250px;
+        }
+
+        .ds-thumbnail-grid {
+          grid-template-columns: repeat(3, 1fr);
+          grid-template-rows: 120px;
+          height: 130px;
+        }
+
+        .ds-gallery {
+          flex-direction: row;
+          height: 250px;
+        }
+
+        .ds-tabs {
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+      }
+
+      /* Untuk iPhone yang lebih kecil (max-width: 375px) */
+      @media (max-width: 375px) {
+        .ds-header-filter span {
+          font-size: 12px;
+        }
+
+        .ds-header-filter {
+          padding: 0 8px;
+        }
+
+        .ds-main-photo {
+          height: 280px;
+        }
+
+        .ds-thumbnail-grid {
+          grid-template-rows: repeat(3, 100px);
+        }
+
+        .ds-title {
+          font-size: 22px;
+        }
+
+        .ds-section-title {
+          font-size: 19px;
+        }
+
+        .ds-package-card {
+          padding: 18px;
+        }
+      }
+
+      /* Untuk iPhone yang sangat kecil (max-width: 320px) */
+      @media (max-width: 320px) {
+        .ds-header-filter span {
+          display: none;
+        }
+
+        .ds-header-filter {
+          width: 44px;
+          justify-content: center;
+          padding: 0;
+        }
+
+        .ds-thumbnail-grid {
+          grid-template-rows: repeat(3, 90px);
+        }
+
+        .ds-package-header {
+          gap: 6px;
+        }
+
+        .ds-package-name {
+          font-size: 18px;
+        }
+
+        .ds-package-price {
+          font-size: 26px;
+        }
+      }
+
+      /* Touch optimization untuk semua mobile */
+      @media (hover: none) and (pointer: coarse) {
+        .ds-nav-btn,
+        .ds-tab-btn,
+        .ds-btn-primary,
+        .ds-btn-secondary {
+          min-height: 44px;
+        }
+
+        .ds-nav-arrow {
+          width: 44px;
+          height: 44px;
+        }
+
+        .ds-thumbnail {
+          cursor: pointer;
+        }
+
+        /* Hilangkan hover effect di mobile */
+        .ds-package-card:hover,
+        .ds-facility-card:hover,
+        .ds-thumbnail:hover {
+          transform: none;
+          border-color: var(--ds-border-light);
+        }
+
+        /* Tambahkan active state untuk touch */
+        .ds-package-card:active,
+        .ds-btn-primary:active,
+        .ds-btn-secondary:active {
+          opacity: 0.9;
+          transform: scale(0.98);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="ds-header" id="mainHeader">
+      <button class="ds-nav-btn" id="backBtn" title="Kembali">
+        <svg viewBox="0 0 24 24">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+      </button>
+
+      <div class="ds-header-search">
+        <svg viewBox="0 0 24 24">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+        <input
+          type="text"
+          class="ds-search-input"
+          id="searchInput"
+          placeholder="Cari paket..."
+        />
+      </div>
+
+      <div class="ds-header-filter" id="dateFilter">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+        <span id="dateDisplay">Pilih tanggal</span>
+        <input type="date" id="datePicker" class="ds-filter-overlay" />
+      </div>
+
+      <div class="ds-header-filter" id="peopleFilter">
+        <svg viewBox="0 0 24 24">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+        <span id="peopleDisplay">Jumlah orang</span>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          style="margin-left: auto"
+        >
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+        <select id="peopleSelect" class="ds-filter-overlay">
+          <option value="">Pilih jumlah</option>
+          <option value="1">1 Orang</option>
+          <option value="2">2 Orang</option>
+          <option value="3">3 Orang</option>
+          <option value="4">4 Orang</option>
+          <option value="5">5 Orang</option>
+          <option value="6">6 - 10 Orang</option>
+          <option value="10+">Lebih dari 10</option>
+        </select>
+      </div>
+
+      <button class="ds-nav-btn" id="profileBtn" title="Profil">
+        <svg viewBox="0 0 24 24">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+      </button>
+    </header>
+
+    <main class="ds-container" id="mainContent">
+      <section class="ds-gallery" id="gallerySection">
+        <div class="ds-main-photo" id="mainPhotoContainer">
+          <img id="mainPhoto" src="" alt="Foto utama studio" />
+          <div class="ds-photo-counter" id="photoCounter">1 / 6</div>
+          <div class="ds-nav-arrow prev" id="prevPhoto">
+            <svg viewBox="0 0 24 24">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </div>
+          <div class="ds-nav-arrow next" id="nextPhoto">
+            <svg viewBox="0 0 24 24">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        </div>
+
+        <div class="ds-thumbnail-grid" id="thumbnailGrid"></div>
+      </section>
+
+      <nav class="ds-tabs" id="tabsNavigation">
+        <button class="ds-tab-btn active" data-tab="overview">
+          Informasi Umum
+        </button>
+        <button class="ds-tab-btn" data-tab="facilities">Fasilitas</button>
+        <button class="ds-tab-btn" data-tab="packages">Paket & Harga</button>
+        <button class="ds-tab-btn" data-tab="reviews">Ulasan</button>
+      </nav>
+
+      <div class="ds-content-wrapper" id="contentWrapper">
+        <div class="ds-main-info" id="mainInfo">
+          <div id="overviewTab" class="tab-content active">
+            <h1 class="ds-title" id="studioName">Loading...</h1>
+
+            <div class="ds-info-row">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3" fill="white"></circle>
+              </svg>
+              <span class="ds-body-text" id="studioLocation">Loading...</span>
+            </div>
+
+            <div class="ds-small-text" style="margin-bottom: 24px">
+              <div id="studioAddress">Loading...</div>
+              <div id="studioCity">Loading...</div>
+            </div>
+
+            <div class="ds-sidebar-section">
+              <h3 class="ds-subsection-title">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <path d="M5 12.55a11 11 0 0 1 14.08 0"></path>
+                  <path d="M1.42 9a16 16 0 0 1 21.16 0"></path>
+                  <path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path>
+                  <line x1="12" y1="20" x2="12.01" y2="20"></line>
+                </svg>
+                Fasilitas Utama
+              </h3>
+
+              <div class="ds-facilities-grid" id="mainFacilities"></div>
+            </div>
+
+            <div class="ds-sidebar-section">
+              <h3 class="ds-subsection-title">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                Jadwal Operasional
+              </h3>
+
+              <div class="ds-hours-card">
+                <table class="ds-schedule-table">
+                  <tbody id="dailyScheduleTable">
+                    <tr>
+                      <td>Senin</td>
+                      <td>
+                        <span class="ds-schedule-time">08:00 - 22:00</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="ds-status-indicator">
+                  <div class="ds-status-dot" id="statusDot"></div>
+                  <span class="ds-small-text" id="statusText">Loading...</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="ds-sidebar-section">
+              <h3 class="ds-subsection-title">Tentang Studio</h3>
+              <p class="ds-body-text" id="studioDescription">Loading...</p>
+            </div>
+          </div>
+
+          <div id="facilitiesTab" class="tab-content hidden">
+            <h2 class="ds-section-title">Fasilitas Lengkap</h2>
+
+            <div class="ds-facilities-grid" id="allFacilities"></div>
+          </div>
+
+          <div id="packagesTab" class="tab-content hidden">
+            <h2 class="ds-section-title">Pilihan Paket Photo Booth</h2>
+
+            <div class="ds-packages-grid" id="packagesContainer"></div>
+
+            <div class="ds-hours-card">
+              <p class="ds-body-text" style="margin-bottom: 8px">
+                <strong>Catatan:</strong> Semua paket sudah termasuk akses ke
+                semua properti foto dan bantuan dari staff kami. Tambahan cetak
+                foto tersedia dengan harga Rp 5.000/lembar.
+              </p>
+            </div>
+          </div>
+
+          <div id="reviewsTab" class="tab-content hidden">
+            <div class="ds-rating-summary">
+              <div class="ds-overall-rating">
+                <div class="ds-rating-number" id="overallRating">5.0</div>
+                <div class="ds-rating-stars" id="ratingStars"></div>
+                <div class="ds-small-text" id="totalReviews">0 ulasan</div>
+              </div>
+
+              <div class="ds-rating-bars" id="ratingBars"></div>
+            </div>
+
+            <div id="reviewsContainer"></div>
+
+            <button class="ds-btn-primary" id="viewAllReviews">
+              Lihat Semua Ulasan
+            </button>
+          </div>
+        </div>
+
+        <aside class="ds-booking-sidebar" id="bookingSidebar">
+          <div class="ds-rating-badge">
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 24 24"
+              fill="white"
+              stroke="white"
+            >
+              <polygon
+                points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"
+              ></polygon>
+            </svg>
+            <span id="sidebarRating">5.0</span>
+          </div>
+          <div
+            class="ds-small-text"
+            style="margin-bottom: 12px"
+            id="sidebarReviewCount"
+          >
+            0 ulasan
+          </div>
+
+          <div class="ds-info-row">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+              ></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+            <span class="ds-small-text" id="studioCapacity">Loading...</span>
+          </div>
+
+          <button class="ds-btn-primary" id="reserveBtn">
+            Reservasi Sekarang
+          </button>
+
+          <div class="ds-sidebar-section">
+            <h4 class="ds-card-title">Informasi Cepat</h4>
+            <div class="ds-info-row">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span class="ds-small-text" id="sidebarHours">Loading...</span>
+            </div>
+            <div class="ds-info-row">
+              <svg viewBox="0 0 24 24">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span class="ds-small-text" id="sidebarLocation">Loading...</span>
+            </div>
+          </div>
+
+          <div class="ds-sidebar-section">
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              "
+            >
+              <h4 class="ds-card-title">Maps</h4>
+              <button
+                class="ds-small-text"
+                style="
+                  background: none;
+                  border: none;
+                  color: var(--ds-black);
+                  cursor: pointer;
+                "
+                id="viewRouteBtn"
+              >
+                Lihat Rute →
+              </button>
+            </div>
+
+            <div class="ds-map-placeholder" id="mapPlaceholder">
+              <svg width="32" height="32" viewBox="0 0 24 24">
+                <polygon
+                  points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"
+                ></polygon>
+                <line x1="8" y1="2" x2="8" y2="18"></line>
+                <line x1="16" y1="6" x2="16" y2="22"></line>
+              </svg>
+              <span class="ds-small-text">Klik untuk membuka maps</span>
+            </div>
+          </div>
+
+          <div class="ds-sidebar-section">
+            <h4 class="ds-card-title">Hubungi Kami</h4>
+            <button
+              class="ds-btn-secondary"
+              id="chatWithPartnerBtn"
+              style="
+                background: var(--ds-black);
+                color: var(--ds-white);
+                border: none;
+                width: 100%;
+                justify-content: center;
+              "
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"
+                ></path>
+              </svg>
+              <span>Chat dengan Kami</span>
+            </button>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <div id="dateModal" class="ds-modal hidden">
+      <div class="ds-modal-content">
+        <div class="ds-modal-header">
+          <h3>Pilih Tanggal</h3>
+          <button class="ds-close-modal">×</button>
+        </div>
+        <div class="ds-modal-body">
+          <input type="date" id="modalDatePicker" />
+        </div>
+        <div class="ds-modal-footer">
+          <button class="ds-btn-secondary" id="cancelDate">Batal</button>
+          <button class="ds-btn-primary" id="confirmDate">Pilih</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/detail-studio.js"></script>
+  </body>
+</html>

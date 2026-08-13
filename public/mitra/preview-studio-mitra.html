@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Preview Studio - PhotoHunt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* --- RESET & BASIC CONFIG --- */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+      color: #1f2937;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    /* --- CONTAINER --- */
+    .preview-container {
+      background: #ffffff;
+      width: 100%;
+      max-width: 480px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      height: 90vh;
+    }
+
+    /* --- HEADER --- */
+    .preview-header {
+      position: sticky;
+      top: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(5px);
+      padding: 15px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      z-index: 50; 
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .preview-title { font-weight: 600; font-size: 16px; }
+    .btn-close {
+      background: none; border: none; font-size: 20px; cursor: pointer; color: #6b7280;
+      width: 30px; height: 30px; display: flex; align-items: center; justify-content: center;
+      border-radius: 50%; transition: 0.2s;
+    }
+    .btn-close:hover { background: #f3f4f6; color: #ef4444; }
+
+    /* --- CONTENT --- */
+    .preview-content {
+      overflow-y: auto;
+      flex: 1;
+      padding-bottom: 40px;
+    }
+    .preview-content::-webkit-scrollbar { width: 6px; }
+    .preview-content::-webkit-scrollbar-thumb { background-color: #d1d5db; border-radius: 10px; }
+
+    /* --- HERO SECTION (GALLERY & PROFILE) --- */
+    .hero-section {
+      position: relative;
+      width: 100%;
+      height: 350px; 
+      background-color: #333; 
+      overflow: hidden;
+    }
+
+    /* 1. GALLERY SCROLL */
+    .gallery-scroll {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      height: 100%;
+      width: 100%;
+      scrollbar-width: none; 
+      position: absolute; 
+      top: 0; left: 0;
+      z-index: 1; 
+    }
+    .gallery-scroll::-webkit-scrollbar { display: none; }
+
+    .gallery-img {
+      flex: 0 0 100%;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      scroll-snap-align: start;
+    }
+
+    /* 2. OVERLAY GRADIENT & PROFILE INFO */
+    .hero-overlay {
+      position: absolute; 
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 60%, transparent 100%);
+      padding: 20px; 
+      padding-top: 80px;
+      color: white;
+      z-index: 10; 
+      pointer-events: none; 
+    }
+
+    /* 3. INDIKATOR FOTO */
+    .gallery-indicator {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-weight: 600;
+      z-index: 20;
+    }
+    
+    .studio-category {
+      background: #111827; color: white; padding: 4px 8px; border-radius: 4px;
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.5px; display: inline-block; margin-bottom: 8px;
+    }
+    .studio-name-large { 
+      font-size: 26px; font-weight: 800; line-height: 1.2; margin-bottom: 8px; 
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5); 
+    }
+    .studio-rating { 
+      font-size: 14px; font-weight: 500; display: flex; align-items: center; gap: 6px; 
+      text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .star { color: #fbbf24; font-size: 16px; }
+
+    /* --- SECTION STYLES --- */
+    .section { padding: 24px 20px; border-bottom: 1px solid #f3f4f6; }
+    .section:last-child { border-bottom: none; }
+    .section-title {
+      font-size: 15px; font-weight: 700; color: #111827; margin-bottom: 16px;
+      text-transform: uppercase; letter-spacing: 0.05em;
+    }
+    .desc-text { font-size: 14px; line-height: 1.6; color: #4b5563; }
+    .info-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; font-size: 14px; color: #374151; }
+    .info-icon { width: 20px; text-align: center; font-size: 16px; }
+
+    /* --- SCHEDULE & BADGE --- */
+    .schedule-table { width: 100%; font-size: 14px; border-collapse: collapse; }
+    .schedule-table td { padding: 10px 0; color: #4b5563; border-bottom: 1px dashed #f3f4f6; }
+    .schedule-table td:last-child { text-align: right; font-weight: 600; color: #111827; }
+    
+    .closed-badge { 
+      background-color: #fee2e2; color: #ef4444; 
+      padding: 4px 10px; border-radius: 6px; 
+      font-size: 11px; font-weight: 700; display: inline-block;
+    }
+
+    /* --- CHIPS & CARDS --- */
+    .chips-wrapper { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      background: #f3f4f6; color: #4b5563; font-size: 12px; font-weight: 500;
+      padding: 8px 14px; border-radius: 20px; border: 1px solid #e5e7eb;
+    }
+    .package-list { display: flex; flex-direction: column; gap: 14px; }
+    .package-card {
+      border: 1px solid #e5e7eb; border-radius: 12px; padding: 18px;
+      transition: all 0.2s; background: #fff;
+    }
+    .package-card:hover { border-color: #111827; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+    .pkg-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .pkg-name { font-weight: 700; font-size: 16px; color: #111827; }
+    .pkg-price { font-weight: 700; color: #111827; font-size: 16px; }
+    .pkg-desc { font-size: 13px; color: #6b7280; line-height: 1.5; }
+
+    /* --- STATES --- */
+    .state-container {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; padding: 40px; text-align: center; color: #6b7280;
+    }
+    .spinner {
+      border: 3px solid #f3f4f6; border-top: 3px solid #111827; border-radius: 50%;
+      width: 30px; height: 30px; animation: spin 1s linear infinite; margin-bottom: 15px;
+    }
+    #elAddress {
+      color: #111827;    
+      text-decoration: underline;
+      cursor: pointer;     
+      transition: color 0.2s;
+    }
+    #elAddress:hover {
+      color: #000000;  
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .hidden { display: none !important; }
+  </style>
+</head>
+
+<body>
+
+  <div class="preview-container">
+    <div class="preview-header">
+      <div class="preview-title">Preview Tampilan</div>
+      <button class="btn-close" id="btnClose" title="Tutup">✕</button>
+    </div>
+
+    <div id="loadingState" class="state-container">
+      <div class="spinner"></div>
+      <p>Mengambil data studio...</p>
+    </div>
+
+    <div id="errorState" class="state-container hidden">
+      <p style="font-size: 24px; margin-bottom: 10px;">😕</p>
+      <p id="errorMsg">Gagal memuat data.</p>
+    </div>
+
+    <div id="contentState" class="preview-content hidden">
+      
+      <div class="hero-section">
+        
+        <div id="galleryCount" class="gallery-indicator hidden">1/1</div>
+
+        <div id="elGalleryScroll" class="gallery-scroll">
+            </div>
+
+        <div class="hero-overlay">
+          <span id="elCategory" class="studio-category">Studio</span>
+          <div id="elName" class="studio-name-large">Nama Studio</div>
+          <div class="studio-rating">
+            <span class="star">★</span> <span id="elRating">0.0</span> 
+            <span style="opacity: 0.7;">•</span> 
+            <span id="elReviews">(0 Ulasan)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="info-row">
+          <span class="info-icon">📍</span>
+          <span id="elAddress" style="flex:1;">Alamat loading...</span>
+        </div>
+        <div class="info-row">
+          <span class="info-icon">📝</span>
+          <span id="elDesc" style="flex:1; line-height:1.5;">...</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Jadwal Operasional</div>
+        <table class="schedule-table">
+          <tbody id="elScheduleList"></tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Fasilitas</div>
+        <div id="elFacilities" class="chips-wrapper"></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Pilihan Paket</div>
+        <div id="elPackages" class="package-list"></div>
+      </div>
+
+    </div>
+  </div>
+
+<script src="../js/preview-studio-mitra.js" defer></script>
+    
+</body>
+</html>

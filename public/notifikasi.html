@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifikasi - PhotoHunt</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Arimo:wght@400;700&family=Cousine&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8f9fa;
+      font-family: "Inter", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      color: #111;
+    }
+
+    #ph-notif-page-root {
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 100px;
+      padding-bottom: 40px;
+    }
+
+    .ph-ntf-nav-bar {
+      width: 92%;
+      max-width: 800px;
+      margin: 0 auto 16px auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ph-ntf-back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .ph-ntf-back-circle {
+      width: 36px;
+      height: 36px;
+      border: 1px solid #d1d5db;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      transition: 0.2s;
+      color: #374151;
+    }
+
+    .ph-ntf-back-btn:hover .ph-ntf-back-circle {
+      background: #000;
+      color: #fff;
+      border-color: #000;
+    }
+
+    .ph-ntf-nav-text {
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      cursor: pointer;
+    }
+
+    .ph-ntf-nav-text:hover {
+      color: #000;
+    }
+
+    #ph-ntf-main-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 32px;
+      width: 92%;
+      max-width: 800px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .ph-ntf-page-title {
+      font-family: "Arimo", sans-serif;
+      font-weight: 700;
+      font-size: 24px;
+      color: #111827;
+      text-align: center;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    .ph-ntf-page-subtitle {
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      color: #6b7280;
+      text-align: center;
+      margin-top: -16px;
+    }
+
+    #ph-notif-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .ph-ntf-item-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 20px;
+      background: #ffffff;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      transition: all 0.2s ease;
+    }
+
+    .ph-ntf-item-row:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .ph-ntf-item-row.is-success {
+      border-left: 4px solid #10b981;
+    }
+
+    .ph-ntf-item-row.is-warning {
+      border-left: 4px solid #f59e0b;
+    }
+
+    .ph-ntf-item-row.is-danger {
+      border-left: 4px solid #ef4444;
+    }
+
+    .ph-ntf-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .ph-ntf-icon-box.is-success {
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .ph-ntf-icon-box.is-warning {
+      background: #fffbeb;
+      color: #d97706;
+    }
+
+    .ph-ntf-icon-box.is-danger {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .ph-ntf-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ph-ntf-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ph-ntf-title-text {
+      font-family: "Arimo", sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      color: #111827;
+      text-transform: uppercase;
+      letter-spacing: 0.01em;
+    }
+
+    .ph-ntf-status-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-family: "Inter", sans-serif;
+      font-weight: 600;
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .ph-ntf-status-badge.is-success {
+      background: #ecfdf5;
+      color: #059669;
+    }
+
+    .ph-ntf-status-badge.is-warning {
+      background: #fffbeb;
+      color: #d97706;
+    }
+
+    .ph-ntf-status-badge.is-danger {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .ph-ntf-meta-row {
+      display: flex;
+      gap: 16px;
+      font-family: "Inter", sans-serif;
+      font-size: 12px;
+      color: #6b7280;
+      align-items: center;
+    }
+
+    .ph-ntf-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ph-ntf-desc-text {
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #374151;
+      margin: 4px 0 0 0;
+    }
+
+    .ph-ntf-trx-id {
+      display: inline-block;
+      background: #f3f4f6;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: "Cousine", monospace;
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 8px;
+      align-self: flex-start;
+    }
+
+    svg {
+      display: block;
+      width: 20px;
+      height: 20px;
+    }
+
+    .ph-ntf-icon-box svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .ph-brand-logo svg {
+      width: 22px;
+      height: 22px;
+    }
+
+    @media (max-width: 768px) {
+      #ph-ntf-main-card {
+        padding: 20px;
+        width: 90%;
+      }
+
+      .ph-ntf-item-row {
+        flex-direction: column;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      .ph-ntf-icon-box {
+        width: 36px;
+        height: 36px;
+      }
+
+      .ph-ntf-header-row {
+        align-items: flex-start;
+      }
+
+      .ph-ntf-meta-row {
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+    }
+  </style>
+</head>
+<header class="ph-header">
+  <div class="ph-header-content">
+    <a href="index.html" class="ph-logo">
+      PhotoHunt
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+        <circle cx="12" cy="13" r="4"></circle>
+      </svg>
+    </a>
+
+    <button class="ph-cta-btn" onclick="window.location.href='chat.html'">
+      Chat
+    </button>
+  </div>
+</header>
+
+<body>
+  <div id="ph-notif-page-root">
+    <nav class="ph-ntf-nav-bar">
+      <button class="ph-ntf-back-btn" onclick="goHome()">
+        <div class="ph-ntf-back-circle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="ph-ntf-nav-text" onclick="goHome()">Kembali ke Beranda</div>
+    </nav>
+
+    <main id="ph-ntf-main-card">
+      <h1 class="ph-ntf-page-title">Notifikasi</h1>
+      <div class="ph-ntf-page-subtitle">
+        Update status reservasi studio Anda
+      </div>
+
+      <div id="ph-notif-list-container"></div>
+    </main>
+  </div>
+
+  <script>
+    const notificationsData = [
+      {
+        id: 1,
+        type: "success",
+        title: "Pembatalan Disetujui",
+        badgeText: "Disetujui",
+        studioName: "Pinarac Studio",
+        date: "10 Des, 11:15",
+        desc: "Dana Rp 350.000 akan dikembalikan dalam 3-5 hari kerja.",
+        trxId: "REF-2025-001245",
+      },
+    ];
+
+    const icons = {
+      success: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+      warning: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>`,
+      danger: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+    };
+
+    function renderNotifications() {
+      const container = document.getElementById("ph-notif-list-container");
+
+      container.innerHTML = "";
+
+      const htmlContent = notificationsData
+        .map((item) => {
+          return `
+                <article class="ph-ntf-item-row is-${item.type}">
+                    <div class="ph-ntf-icon-box is-${item.type}">
+                        ${icons[item.type]}
+                    </div>
+                    <div class="ph-ntf-content">
+                        <div class="ph-ntf-header-row">
+                            <span class="ph-ntf-title-text">${item.title}</span>
+                            <span class="ph-ntf-status-badge is-${item.type}">${item.badgeText
+            }</span>
+                        </div>
+                        <div class="ph-ntf-meta-row">
+                            <div class="ph-ntf-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                <span>${item.studioName}</span>
+                            </div>
+                            <div class="ph-ntf-meta-item">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                <span>${item.date}</span>
+                            </div>
+                        </div>
+                        <p class="ph-ntf-desc-text">
+                            ${item.desc}
+                        </p>
+                        <div class="ph-ntf-trx-id">${item.trxId}</div>
+                    </div>
+                </article>
+                `;
+        })
+        .join("");
+
+      container.innerHTML = htmlContent;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderNotifications();
+    });
+
+    function goHome() {
+      window.location.href = "customer-app.html";
+    }
+  </script>
+</body>
+
+</html>

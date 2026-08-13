@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pembatalan - Berhasil</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(#d9d9d9 0%, #f7f7f7 25%, #ffffff 60%);
+            display: flex;
+            justify-content: center;
+            padding: 24px;
+            color: #111;
+        }
+        
+        .page {
+            width: min(920px, 100%);
+        }
+        
+        .topbar {
+            display: flex;
+            justify-content: center;
+            padding: 6px 0 18px;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 700;
+        }
+        
+        .center {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: calc(100vh - 90px);
+        }
+        
+        .card {
+            width: min(560px, 92%);
+            background: #efefef;
+            border-radius: 10px;
+            padding: 34px 24px 28px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            animation: popIn 0.4s ease;
+        }
+        
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: scale(0.85);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .check-wrap {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 14px;
+        }
+        
+        .checkmark-path {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 100;
+            animation: drawCheck 0.6s 0.3s forwards ease-out;
+        }
+        
+        @keyframes drawCheck {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+        
+        .msg {
+            margin: 0 0 10px;
+            font-size: 18px;
+            line-height: 1.5;
+            color: #444;
+        }
+
+        .detail-box {
+            background: #e0e0e0;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 0 auto 22px;
+            font-size: 14px;
+            color: #666;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        .detail-box strong {
+            color: #333;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .btn {
+            border: none;
+            background: #25c05a;
+            color: #fff;
+            font-weight: 700;
+            padding: 12px 26px;
+            border-radius: 10px;
+            cursor: pointer;
+            min-width: 190px;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(37, 192, 90, 0.3);
+            transition: transform 0.1s;
+        }
+        
+        .btn:active {
+            transform: scale(0.96);
+        }
+        
+        @media (max-width:600px) {
+            h1 {
+                font-size: 22px;
+            }
+            .msg {
+                font-size: 16px;
+            }
+            .card {
+                padding: 28px 18px 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page">
+        <div class="topbar">
+            <h1>Pembatalan</h1>
+        </div>
+
+        <div class="center">
+            <div class="card" role="status" aria-live="polite">
+                <div class="check-wrap" aria-hidden="true">
+                    <svg width="64" height="64" viewBox="0 0 64 64">
+                        <circle cx="32" cy="32" r="28" fill="none"
+                          stroke="#25c05a" stroke-width="3" opacity="0.2"/>
+                        <path class="checkmark-path"
+                          d="M18 32 L28 42 L46 22"
+                          fill="none" stroke="#25c05a" stroke-width="4"
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+
+                <h2 style="margin:0 0 8px;">Pembatalan Berhasil</h2>
+                <p class="msg">
+                    Pesanan Anda telah dibatalkan oleh sistem.<br> Dana akan dikembalikan sesuai kebijakan.
+                </p>
+
+                <div class="detail-box">
+                    <div id="idDisplay">ID Pesanan: -</div>
+                    <div id="alasanDisplay" style="font-size: 13px; margin-top:5px; font-style:italic;"></div>
+                </div>
+                <br>
+
+                <button class="btn" type="button" onclick="backHome()">
+                    Kembali ke Beranda
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = params.get("id");
+            const alasan = localStorage.getItem('alasan_batal');
+
+            console.log("Menampilkan info pembatalan untuk ID:", id);
+            console.log("Alasan:", alasan);
+
+            if (id) {
+                document.getElementById("idDisplay").innerHTML = `<strong>ID Pesanan:</strong> #${id}`;
+            }
+
+            if (alasan) {
+                document.getElementById("alasanDisplay").innerText = `"${alasan}"`;
+            }
+        });
+
+        function backHome() {
+            window.location.href = "customer-app.html";
+        }
+    </script>
+</body>
+</html>

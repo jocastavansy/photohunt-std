@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Reservasi Masuk</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Inter", "Segoe UI", sans-serif;
+    }
+
+    body {
+      background-color: #f8f9fc;
+      color: #333;
+      padding-bottom: 40px;
+    }
+
+    .mitra-header {
+      background-color: #ffffff;
+      padding: 20px 30px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border-bottom: 1px solid #eaeaea;
+      margin-bottom: 0px;
+    }
+
+    .mitra-back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    .mitra-back-btn:hover {
+      background-color: #f0f0f0;
+    }
+
+    .mitra-back-icon {
+      width: 24px;
+      height: 24px;
+      color: #2d3748;
+    }
+
+    .mitra-header-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #2d3748;
+    }
+
+    .mitra-page-title {
+      margin-bottom: 14px;
+    }
+
+    .mitra-reservasi-page {
+      font-family: Inter, system-ui, sans-serif;
+      background: #f9fafb;
+      padding: 20px;
+      color: #111827;
+    }
+
+    .mitra-back-btn {
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 8px;
+    }
+
+    .mitra-back-btn:hover {
+      background: #f3f4f6;
+    }
+
+    .mitra-back-icon {
+      width: 22px;
+      height: 22px;
+      color: #111827;
+    }
+
+    .mitra-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .mitra-tab {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .mitra-tab.active {
+      background: #111827;
+      color: #fff;
+    }
+
+    .mitra-card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .mitra-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .mitra-title-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .mitra-studio-name {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .mitra-btn-detail,
+    .btn-outline,
+    .btn-outline-danger,
+    .btn-success,
+    .btn-primary {
+      padding: 6px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      border: 1px solid #e5e7eb;
+      background: #fff;
+    }
+
+    .btn-success {
+      background: #008236;
+      color: #fff;
+      border-color: #008236;
+    }
+
+    .btn-success:hover {
+      background: #00662b;
+    }
+
+    .btn-outline-danger {
+      color: #991b1b;
+      border-color: #fecaca;
+    }
+
+    .btn-outline-danger:hover {
+      background: #fee2e2;
+    }
+
+    .btn-primary {
+      background: #111827;
+      color: #fff;
+      border-color: #111827;
+    }
+
+    .btn-primary:hover {
+      background: #374151;
+    }
+
+    .btn-outline {
+      border: 1px solid #e5e7eb;
+      color: #374151;
+    }
+
+    .btn-outline:hover {
+      background: #f3f4f6;
+    }
+
+    .mitra-badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .success {
+      background: #dcfce7;
+      color: #008236;
+    }
+
+    .warning {
+      background: #ffedd4;
+      color: #ca3500;
+    }
+
+    .info {
+      background: #fef9c2;
+      color: #a65f00;
+    }
+
+    .done {
+      background: #dbeafe;
+      color: #1447e6;
+    }
+
+    .danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .mitra-order-id {
+      font-size: 12px;
+      color: #6b7280;
+      margin: 6px 0 12px;
+    }
+
+    .mitra-info-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .mitra-info-item .label {
+      display: block;
+      font-size: 11px;
+      color: #6b7280;
+      margin-bottom: 2px;
+    }
+
+    .mitra-info-item .value {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .mitra-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+
+    .mitra-price .label {
+      font-size: 11px;
+      color: #6b7280;
+      display: block;
+    }
+
+    .mitra-price .price {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .mitra-actions {
+      display: flex;
+      gap: 8px;
+    }
+    /* ========== MEDIA QUERY KHUSUS IPHONE 14 PLUS & SMALLER PHONES ========== */
+    @media (max-width: 428px) {
+      .mitra-header {
+        padding: 12px 14px;
+        gap: 10px;
+      }
+      
+      .mitra-back-icon {
+        width: 18px;
+        height: 18px;
+      }
+      
+      .mitra-header-title {
+        font-size: 0.9rem;
+      }
+      
+      .mitra-reservasi-page {
+        padding: 12px;
+      }
+      
+      .mitra-tabs {
+        margin-bottom: 12px;
+      }
+      
+      .mitra-tab {
+        padding: 3px 7px;
+        font-size: 9px;
+      }
+      
+      .mitra-card {
+        padding: 10px;
+        margin-bottom: 8px;
+      }
+      
+      .mitra-studio-name {
+        font-size: 11px;
+      }
+      
+      .mitra-btn-detail,
+      .btn-outline,
+      .btn-outline-danger,
+      .btn-success,
+      .btn-primary {
+        padding: 3px 8px;
+        font-size: 10px;
+      }
+      
+      .mitra-badge {
+        font-size: 9px;
+        padding: 1px 5px;
+      }
+      
+      .mitra-order-id {
+        font-size: 9px;
+        margin: 2px 0 6px;
+      }
+      
+      .mitra-info-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-bottom: 10px;
+      }
+      
+      .mitra-info-item .label {
+        font-size: 8px;
+      }
+      
+      .mitra-info-item .value {
+        font-size: 10px;
+      }
+      
+      .mitra-card-footer {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+      }
+      
+      .mitra-actions {
+        justify-content: flex-end;
+      }
+      
+      .loading-state {
+        font-size: 12px;
+        padding: 16px;
+      }
+    }
+
+    /* ========== MEDIA QUERY UNTUK VERY SMALL PHONES ========== */
+    @media (max-width: 375px) {
+      .mitra-tabs {
+        gap: 3px;
+      }
+      
+      .mitra-tab {
+        padding: 2px 6px;
+        font-size: 8px;
+      }
+      
+      .mitra-card {
+        padding: 8px;
+      }
+      
+      .mitra-info-grid {
+        grid-template-columns: 1fr;
+        gap: 6px;
+      }
+      
+      .mitra-actions {
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="mitra-header">
+    <button class="mitra-back-btn" onclick="history.back()" aria-label="Kembali">
+      <svg class="mitra-back-icon" viewBox="0 0 24 24" fill="none">
+        <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+    </button>
+    <h1 class="mitra-header-title">Reservasi Masuk</h1>
+  </div>
+
+  <div class="mitra-reservasi-page">
+    <div class="mitra-tabs">
+      <button class="mitra-tab active" onclick="filterData('all', this)">
+        Semua
+      </button>
+      <button class="mitra-tab" onclick="filterData('pending', this)">
+        Menunggu Konfirmasi
+      </button>
+      <button class="mitra-tab" onclick="filterData('pending_payment', this)">
+        Menunggu Pembayaran
+      </button>
+      <button class="mitra-tab" onclick="filterData('confirmed', this)">
+        Terkonfirmasi
+      </button>
+      <button class="mitra-tab" onclick="filterData('completed', this)">
+        Selesai
+      </button>
+      <button class="mitra-tab" onclick="filterData('rejected', this)">
+        Ditolak
+      </button>
+      <button class="mitra-tab" onclick="filterData('cancelled', this)">
+        Dibatalkan
+      </button>
+    </div>
+
+    <div class="mitra-reservasi-list" id="reservation-container">
+      <div class="loading-state">Sedang memuat data reservasi...</div>
+    </div>
+  </div>
+
+  <script src="../js/reservasi-mitra.js" defer></script>
+</body>
+
+</html>

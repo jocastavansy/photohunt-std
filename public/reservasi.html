@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservasi - PhotoHunt</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap"
+    rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", sans-serif;
+    }
+
+    body {
+      background-color: #f5f5f5;
+      padding-bottom: 50px;
+    }
+
+    header {
+      background: linear-gradient(180deg, #a8a8a8 0%, #f5f5f5 100%);
+      padding: 20px 40px;
+      height: 120px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .ph-header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 100%;
+      padding-top: 10px;
+    }
+
+    .ph-logo {
+      font-weight: 700;
+      font-size: 32px;
+      display: flex;
+      align-items: center;
+      color: #000;
+      text-decoration: none;
+    }
+    
+    .ph-logo svg {
+      width: 32px; 
+      height: 32px;
+      margin-left: 10px;
+    }
+
+    .ph-cta-btn {
+      background: #000;
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 16px;
+    }
+
+    .navigation-container {
+      max-width: 1112px;
+      margin: 0 auto;
+      padding: 0 0 20px 0;
+      margin-top: 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: #000;
+      font-weight: 400;
+      padding: 0;
+    }
+
+    .back-icon-circle {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+    }
+
+    .back-btn:hover .back-icon-circle {
+      background: #000;
+      color: #fff;
+    }
+
+    .reservation-card {
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid #000000;
+      max-width: 1112px;
+      margin: 0 auto;
+      padding: 40px;
+      position: relative;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .reservation-card h2 {
+      font-size: 32px;
+      font-weight: 500;
+      margin-bottom: 5px;
+      letter-spacing: -0.02em;
+    }
+
+    .reservation-card .subtitle {
+      display: block;
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 20px;
+      margin-bottom: 20px; 
+    }
+
+    /* Style Tombol Chat di dalam Card */
+    .btn-chat-secondary {
+        background: #000;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        margin-bottom: 30px;
+        transition: opacity 0.2s;
+    }
+    .btn-chat-secondary:hover {
+        opacity: 0.8;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 400;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+    }
+
+    .paket {
+      display: flex;
+      gap: 20px;
+      justify-content: space-between;
+    }
+
+    .card-choice {
+      flex: 1;
+      border: 2px solid rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      background: white;
+      transition: all 0.2s ease;
+      min-height: 100px;
+    }
+
+    .card-choice:hover {
+      border-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .card-choice.selected {
+      border-color: #000000;
+      background-color: #fafafa;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .card-choice h5 {
+      font-size: 18px;
+      font-weight: 400;
+      margin-bottom: 5px;
+    }
+
+    .desc {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.5);
+      font-weight: 300;
+      margin-bottom: 15px;
+    }
+
+    .details {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.5);
+      font-weight: 300;
+    }
+
+    .dot {
+      width: 5px;
+      height: 5px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 50%;
+    }
+
+    .price h5 {
+      color: #00c21d;
+      text-align: right;
+      font-size: 18px;
+      margin: 0;
+      margin-top: 10px;
+      font-weight: 400;
+    }
+
+    .date-input-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .date select {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 10px;
+      border: 2px solid rgba(0, 0, 0, 0.3);
+      font-size: 20px;
+      color: #000;
+      background: white;
+      outline: none;
+      cursor: pointer;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="black" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+
+    .time {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 15px;
+      row-gap: 15px;
+    }
+
+    .jadwal-item {
+      border: 2px solid rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      padding: 10px 0;
+      text-align: center;
+      font-size: 18px;
+      color: #000;
+      cursor: pointer;
+      transition: 0.2s;
+      background: #fff;
+    }
+
+    .jadwal-item:hover {
+      border-color: rgba(0, 0, 0, 0.6);
+    }
+
+    .jadwal-item.selected {
+      background-color: #000;
+      color: #fff;
+      border-color: #000;
+    }
+
+    .jumlah-orang-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+
+    .counter-box {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+    }
+
+    .counter-box button {
+      width: 40px;
+      height: 40px;
+      border: 1px solid rgba(0, 0, 0, 0.3);
+      background: white;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: 900;
+      color: rgba(0, 0, 0, 0.5);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: 0.2s;
+    }
+
+    .counter-box button:hover {
+      border-color: #000;
+      color: #000;
+    }
+
+    .counter-box span {
+      font-size: 20px;
+      min-width: 25px;
+      text-align: center;
+    }
+
+    .unit {
+      font-size: 20px;
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    .pay-btn {
+      display: block;
+      width: 100%;
+      margin-top: 60px;
+      background: #d9d9d9;
+      color: white;
+      font-weight: 700;
+      font-size: 20px;
+      padding: 15px;
+      border: none;
+      border-radius: 10px;
+      cursor: not-allowed;
+      transition: background-color 0.3s;
+    }
+
+    .pay-btn.active {
+      background: #000000;
+      cursor: pointer;
+    }
+    /* ==================== */
+/* RESPONSIVE RESERVASI - IPHONE 14 PLUS */
+/* ==================== */
+
+/* MOBILE: iPhone 14 Plus dan sejenis (max-width: 428px) */
+@media (max-width: 428px) {
+    /* Header */
+    header {
+        padding: 15px 20px;
+        height: 100px;
+    }
+    
+    .ph-header-content {
+        padding-top: 5px;
+    }
+    
+    .ph-logo {
+        font-size: 24px;
+    }
+    
+    .ph-logo svg {
+        width: 24px;
+        height: 24px;
+        margin-left: 6px;
+    }
+    
+    .ph-cta-btn {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+    
+    /* Navigation */
+    .navigation-container {
+        padding: 0 15px 15px;
+        margin-top: 10px;
+    }
+    
+    .back-btn {
+        font-size: 18px;
+        gap: 10px;
+    }
+    
+    .back-icon-circle {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+    }
+    
+    /* Reservation Card */
+    .reservation-card {
+        margin: 0 15px;
+        padding: 25px;
+        border-radius: 16px;
+    }
+    
+    .reservation-card h2 {
+        font-size: 24px;
+        line-height: 1.3;
+    }
+    
+    .reservation-card .subtitle {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+    
+    /* Chat Button */
+    .btn-chat-secondary {
+        padding: 8px 16px;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+    
+    /* Section Title */
+    .section-title {
+        font-size: 18px;
+        margin-top: 25px;
+        margin-bottom: 12px;
+    }
+    
+    .section-title img {
+        width: 18px;
+        margin-right: 6px;
+    }
+    
+    /* Paket Selection */
+    .paket {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .card-choice {
+        padding: 18px;
+        min-height: auto;
+    }
+    
+    .card-choice h5 {
+        font-size: 16px;
+    }
+    
+    .desc {
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+    
+    .details {
+        font-size: 13px;
+        gap: 6px;
+    }
+    
+    .dot {
+        width: 4px;
+        height: 4px;
+    }
+    
+    .price h5 {
+        font-size: 16px;
+        margin-top: 8px;
+        text-align: left;
+    }
+    
+    /* Date Selection */
+    .date select {
+        font-size: 16px;
+        padding: 10px 12px;
+        border-radius: 8px;
+    }
+    
+    /* Time Selection */
+    .time {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        row-gap: 10px;
+    }
+    
+    .jadwal-item {
+        padding: 8px 0;
+        font-size: 16px;
+        border-radius: 8px;
+    }
+    
+    /* Jumlah Orang */
+    .jumlah-orang-wrapper {
+        gap: 15px;
+        margin-top: 5px;
+        flex-wrap: wrap;
+    }
+    
+    .counter-box {
+        gap: 20px;
+    }
+    
+    .counter-box button {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+        border-radius: 8px;
+    }
+    
+    .counter-box span {
+        font-size: 18px;
+    }
+    
+    .unit {
+        font-size: 16px;
+    }
+    
+    /* Pay Button */
+    .pay-btn {
+        margin-top: 40px;
+        padding: 14px;
+        font-size: 18px;
+        border-radius: 8px;
+    }
+}
+
+/* iPhone Landscape Mode */
+@media (max-width: 926px) and (min-height: 428px) and (orientation: landscape) {
+    header {
+        height: 80px;
+        padding: 10px 20px;
+    }
+    
+    .navigation-container {
+        padding: 0 20px 10px;
+    }
+    
+    .reservation-card {
+        margin: 0 20px;
+    }
+    
+    .paket {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .card-choice {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 0;
+    }
+    
+    .time {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+/* iPhone kecil (max-width: 375px) */
+@media (max-width: 375px) {
+    .reservation-card {
+        padding: 20px;
+    }
+    
+    .reservation-card h2 {
+        font-size: 22px;
+    }
+    
+    .reservation-card .subtitle {
+        font-size: 15px;
+    }
+    
+    .time {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .jadwal-item {
+        font-size: 15px;
+        padding: 7px 0;
+    }
+    
+    .pay-btn {
+        font-size: 17px;
+    }
+}
+
+/* iPhone sangat kecil (max-width: 320px) */
+@media (max-width: 320px) {
+    header {
+        padding: 12px 15px;
+    }
+    
+    .ph-logo {
+        font-size: 22px;
+    }
+    
+    .ph-cta-btn {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+    
+    .reservation-card {
+        padding: 18px;
+        margin: 0 12px;
+    }
+    
+    .card-choice {
+        padding: 15px;
+    }
+    
+    .card-choice h5 {
+        font-size: 15px;
+    }
+    
+    .price h5 {
+        font-size: 15px;
+    }
+    
+    .time {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+/* Touch Optimization untuk semua mobile */
+@media (hover: none) and (pointer: coarse) {
+    .ph-cta-btn,
+    .back-btn,
+    .card-choice,
+    .jadwal-item,
+    .counter-box button,
+    .pay-btn,
+    .btn-chat-secondary {
+        min-height: 44px;
+    }
+    
+    .counter-box button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Hilangkan hover effect di mobile */
+    .card-choice:hover,
+    .jadwal-item:hover,
+    .back-btn:hover .back-icon-circle {
+        transform: none;
+    }
+    
+    /* Tambahkan active state untuk touch */
+    .card-choice:active,
+    .jadwal-item:active,
+    .pay-btn:active,
+    .btn-chat-secondary:active {
+        opacity: 0.8;
+        transform: scale(0.98);
+    }
+    
+    .back-btn:active .back-icon-circle {
+        background: #000;
+        color: #fff;
+    }
+}
+
+/* Tablet kecil (max-width: 768px) */
+@media (max-width: 768px) and (min-width: 429px) {
+    .reservation-card {
+        margin: 0 20px;
+        padding: 30px;
+    }
+    
+    .paket {
+        flex-wrap: wrap;
+    }
+    
+    .card-choice {
+        flex: 1 1 calc(50% - 10px);
+        min-width: 0;
+    }
+    
+    .time {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Body padding untuk mobile */
+@media (max-width: 428px) {
+    body {
+        padding-bottom: 30px;
+    }
+}
+  </style>
+</head>
+
+<body>
+  <header class="ph-header">
+    <div class="ph-header-content">
+      <a href="index.html" class="ph-logo">
+        PhotoHunt
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+          <circle cx="12" cy="13" r="4"></circle>
+        </svg>
+      </a>
+
+      <button class="ph-cta-btn" onclick="openChatFromReservation()">
+        Chat
+      </button>
+    </div>
+  </header>
+  <main>
+    <div class="navigation-container">
+      <button class="back-btn" onclick="history.back()">
+        <div class="back-icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </div>
+        Kembali ke Detail Studio
+      </button>
+    </div>
+
+    <section class="reservation-card">
+      <h2 id="studio-name">Loading...</h2>
+      <label class="subtitle" id="studio-location">Loading...</label>
+
+      <button id="btnChatToko" class="btn-chat-secondary" onclick="openChatFromReservation()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        Chat
+      </button>
+
+      <h5 class="section-title">Pilih Paket</h5>
+      <div class="paket" id="paket-container"></div>
+
+      <h5 class="section-title">
+        <img src="https://img.icons8.com/material-outlined/24/000000/calendar--v1.png" alt="cal"
+          style="width: 20px; margin-right: 8px" />
+        Pilih Tanggal
+      </h5>
+      <div class="date">
+        <div class="date-input-wrapper">
+          <select id="tanggal-select">
+            <option value="" disabled selected>Pilih Tanggal</option>
+          </select>
+        </div>
+      </div>
+
+      <h5 class="section-title">
+        <img src="https://img.icons8.com/material-outlined/24/000000/clock--v1.png" alt="clock"
+          style="width: 20px; margin-right: 8px" />
+        Pilih Waktu
+      </h5>
+      <div class="time" id="waktu-container"></div>
+
+      <h5 class="section-title">
+        <img src="https://img.icons8.com/material-rounded/24/000000/user-group-man-man.png" alt="user"
+          style="width: 20px; margin-right: 8px" />
+        Jumlah Orang
+      </h5>
+      <div class="jumlah-orang-wrapper">
+        <div class="counter-box">
+          <button onclick="updateOrang(-1)">-</button>
+          <span id="jumlah-orang-text">1</span>
+          <button onclick="updateOrang(1)">+</button>
+        </div>
+        <span class="unit">orang</span>
+      </div>
+
+      <button class="pay-btn" onclick="lanjutkanPembayaran()">
+        LANJUTKAN PEMBAYARAN
+      </button>
+    </section>
+
+    <script src="js/reservasi.js" defer></script>
+  </main>
+</body>
+
+</html>

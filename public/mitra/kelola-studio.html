@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Kelola Studio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Inter", "Segoe UI", sans-serif;
+      }
+      body {
+        background-color: #f8f9fc;
+        color: #333;
+        padding-bottom: 40px;
+      }
+
+      .mitra-header {
+        background-color: #ffffff;
+        padding: 20px 30px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        border-bottom: 1px solid #eaeaea;
+        margin-bottom: 30px;
+      }
+      .mitra-back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px;
+        border-radius: 50%;
+        transition: background 0.2s;
+      }
+      .mitra-back-btn:hover {
+        background-color: #f0f0f0;
+      }
+      .mitra-back-icon {
+        width: 24px;
+        height: 24px;
+        color: #2d3748;
+      }
+      .mitra-header-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #2d3748;
+      }
+
+      .mitra-edit-page {
+        padding: 0 30px;
+        max-width: 1000px;
+        margin: 0 auto;
+      }
+      .mitra-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .mitra-info {
+        background-color: #ebf8ff;
+        border: 1px solid #bee3f8;
+        color: #2c5282;
+        padding: 15px 20px;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .mitra-info-icon {
+        font-size: 1.2rem;
+        color: #3182ce;
+      }
+
+      .mitra-card {
+        background: #ffffff;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        padding: 25px;
+        border: 1px solid #f0f0f0;
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+      }
+      .mitra-image {
+        width: 140px;
+        height: 140px;
+        background-color: #edf2f7;
+        border-radius: 10px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        overflow: hidden;
+      }
+      #studioMainImage {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .mitra-badge {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        z-index: 2;
+      }
+      .mitra-content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .mitra-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1a202c;
+      }
+      .mitra-address {
+        color: #718096;
+        font-size: 0.95rem;
+        line-height: 1.5;
+      }
+
+      .mitra-rating {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: #2d3748;
+      }
+      .mitra-review {
+        color: #718096;
+        font-weight: 400;
+        font-size: 0.9rem;
+      }
+
+      .mitra-price,
+      .mitra-paket {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 5px;
+      }
+      .mitra-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .mitra-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
+      }
+      .mitra-tag {
+        background-color: #f7fafc;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+      }
+
+      .mitra-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+      }
+      .mitra-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .mitra-btn-primary {
+        background-color: #4f46e5;
+        color: white;
+      }
+      .mitra-btn-primary:hover {
+        background-color: #4338ca;
+      }
+      .mitra-btn-outline {
+        background-color: white;
+        border: 1px solid #e2e8f0;
+        color: #4a5568;
+      }
+      .mitra-btn-outline:hover {
+        background-color: #f7fafc;
+        border-color: #cbd5e0;
+      }
+
+      @media (max-width: 768px) {
+        .mitra-card {
+          flex-direction: column;
+        }
+        .mitra-image {
+          width: 100%;
+          height: 200px;
+        }
+        .mitra-actions {
+          width: 100%;
+        }
+        .mitra-btn {
+          flex: 1;
+          justify-content: center;
+        }
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="mitra-header">
+      <a
+        href="./mitra-dashboard.html"
+        class="mitra-back-btn"
+        style="
+          text-decoration: none;
+          color: inherit;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        "
+      >
+        <svg class="mitra-back-icon" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M19 12H5M12 19l-7-7 7-7"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </a>
+      <h1 class="mitra-header-title">Kelola Studio</h1>
+    </div>
+
+    <div class="mitra-edit-page">
+      <div class="mitra-wrap">
+        <div id="loadingState" style="text-align: center; padding: 80px 20px">
+          <div style="font-size: 2rem; margin-bottom: 10px">⏳</div>
+          <p style="color: #718096; font-weight: 500">
+            Sedang memuat data studio...
+          </p>
+        </div>
+
+        <div id="contentState" class="hidden">
+          <div class="mitra-info">
+            <span class="mitra-info-icon">ⓘ</span>
+            <span>
+              <strong>Informasi:</strong>
+              Setiap akun Mitra hanya dapat mendaftarkan 1 studio. Anda dapat
+              mengedit informasi studio Anda kapan saja.
+            </span>
+          </div>
+
+          <div class="mitra-card" style="margin-top: 20px">
+            <div class="mitra-image">
+              <img id="studioMainImage" src="" alt="Foto Studio" />
+              <span class="mitra-badge" id="studioType">-</span>
+            </div>
+
+            <div class="mitra-content">
+              <div class="mitra-name" id="studioName"></div>
+              <div class="mitra-address" id="studioAddress"></div>
+
+              <div class="mitra-rating">
+                <span id="studioRating">-</span>
+                <span class="mitra-review" id="studioReview"></span>
+              </div>
+
+              <div class="mitra-price">
+                <div class="mitra-label">Paket Harga:</div>
+                <div id="studioPrice"></div>
+              </div>
+
+              <div class="mitra-paket">
+                <div class="mitra-label">Paket Tersedia:</div>
+                <div class="mitra-tags" id="studioPackages"></div>
+              </div>
+
+              <div class="mitra-actions">
+                <button
+                  type="button"
+                  class="mitra-btn mitra-btn-outline"
+                  id="previewStudioBtn"
+                >
+                  👁 Preview
+                </button>
+                <button
+                  type="button"
+                  class="mitra-btn mitra-btn-primary"
+                  id="editStudioBtn"
+                >
+                  ✎ Edit
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          id="emptyState"
+          class="mitra-card hidden"
+          style="
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 60px;
+          "
+        >
+          <div style="font-size: 3rem; margin-bottom: 10px">🏠</div>
+          <h3 style="margin-bottom: 8px">Belum ada Studio</h3>
+          <p style="color: #666; margin-bottom: 25px; max-width: 400px">
+            Anda belum mendaftarkan studio apapun. Silakan daftarkan studio Anda
+            untuk mulai menerima pesanan.
+          </p>
+          <button
+            class="mitra-btn mitra-btn-primary"
+            onclick="window.location.href = 'daftar-studio.html'"
+          >
+            + Tambah Studio Baru
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/kelola-studio.js" defer></script>
+  </body>
+</html>

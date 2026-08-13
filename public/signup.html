@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - PhotoHunt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .layout-auth-user {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #ffffff;
+        box-sizing: border-box;
+        padding: 40px 20px;
+        font-family: "Inter", sans-serif;
+        position: relative;
+      }
+
+      .auth-signup {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+
+      .auth-signup * {
+        box-sizing: border-box;
+      }
+
+      .phlu-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 440px;
+        gap: 20px;
+      }
+
+      .phlu-header-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+      }
+
+      .phlu-brand-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 10px;
+      }
+
+      .phlu-brand {
+        font-family: "Inter", sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: #000;
+        letter-spacing: -0.02em;
+      }
+
+      .phlu-camera-svg {
+        width: 42px;
+        height: 42px;
+        color: #000;
+      }
+
+      .phlu-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #000;
+      }
+
+      .phlu-subtitle {
+        font-size: 16px;
+        color: #000;
+        text-align: center;
+        font-weight: 400;
+      }
+
+      .phlu-form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        width: 100%;
+      }
+
+      .phlu-field {
+        width: 100%;
+        height: 48px;
+        background: #ffffff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        transition: border-color 0.2s;
+      }
+
+      .phlu-field:focus-within {
+        border-color: #000;
+      }
+
+      .phlu-input {
+        width: 100%;
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 16px;
+        font-family: "Inter", sans-serif;
+        color: #000;
+      }
+      .phlu-input::placeholder {
+        color: #828282;
+      }
+
+      .phlu-gender-container {
+        display: flex;
+        flex-direction: row;
+        gap: 16px;
+        width: 100%;
+        justify-content: center;
+      }
+
+      .phlu-gender-box {
+        width: 80px;
+        height: 56px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.2s;
+        background: #fff;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      .phlu-gender-box:hover {
+        background-color: #f9f9f9;
+        border-color: #828282;
+      }
+
+      .gender-active {
+        background-color: #000 !important;
+        border-color: #000 !important;
+        color: #fff !important;
+      }
+
+      .phlu-button {
+        width: 100%;
+        height: 48px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 16px;
+        transition: opacity 0.2s;
+        background: #000000;
+        color: #ffffff;
+      }
+      .phlu-button:hover {
+        opacity: 0.9;
+      }
+
+      .phlu-back-btn {
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 24px;
+        transition: background 0.2s;
+      }
+      .phlu-back-btn:hover {
+        background: #f5f5f5;
+      }
+
+      .phlu-terms {
+        font-size: 14px;
+        text-align: center;
+        line-height: 1.5;
+        color: #828282;
+        margin-top: 10px;
+      }
+      .phlu-strong {
+        color: #000;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      /* Mobile Responsive */
+      @media (max-width: 600px) {
+        .phlu-back-btn {
+          top: 20px;
+          left: 10px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout-auth-user">
+      <div class="phlu-back-btn" id="btnBack">←</div>
+
+      <div class="auth-signup">
+        <div class="phlu-content-wrapper">
+          <div class="phlu-header-group">
+            <div class="phlu-brand-container">
+              <div class="phlu-brand">PhotoHunt</div>
+              <svg
+                class="phlu-camera-svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7 6C7 4.89543 7.89543 4 9 4H15C16.1046 4 17 4.89543 17 6H20C21.1046 6 22 6.89543 22 8V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V8C2 6.89543 2.89543 6 4 6H7Z"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="13"
+                  r="4"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <div class="phlu-title">Create an account</div>
+            <div class="phlu-subtitle">
+              Enter your data to sign up for this app
+            </div>
+          </div>
+
+          <div class="phlu-form-group">
+            <div class="phlu-field">
+              <input
+                type="text"
+                id="inputName"
+                class="phlu-input"
+                placeholder="Full Name"
+              />
+            </div>
+
+            <div class="phlu-field">
+              <input
+                type="tel"
+                id="inputPhone"
+                class="phlu-input"
+                placeholder="Phone Number"
+              />
+            </div>
+
+            <div class="phlu-field">
+              <input
+                type="email"
+                id="inputEmail"
+                class="phlu-input"
+                placeholder="Email"
+              />
+            </div>
+
+            <div class="phlu-field">
+              <input
+                type="password"
+                id="inputPassword"
+                class="phlu-input"
+                placeholder="Password"
+              />
+            </div>
+          </div>
+
+          <div class="phlu-gender-container">
+            <div class="phlu-gender-box" id="genderFemale">♀</div>
+            <div class="phlu-gender-box" id="genderMale">♂</div>
+          </div>
+
+          <div class="phlu-button" id="btnContinue">Continue</div>
+
+          <div class="phlu-terms">
+            By clicking continue, you agree to our<br />
+            <span class="phlu-strong">Terms of Service</span> and
+            <span class="phlu-strong">Privacy Policy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+        <script src="/js/signup.js" defer></script>
+
+  </body>
+</html>

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pengaturan - PhotoHunt</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Arimo:wght@400;700&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="/style.css" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      font-family: "Inter", sans-serif;
+      color: #222529;
+    }
+
+    .ph-page-wrapper {
+      background-color: #f5f5f5;
+      min-height: 100vh;
+      padding-top: 120px;
+      padding-bottom: 50px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .ph-page-wrapper * {
+      box-sizing: border-box;
+    }
+
+    .navigation-bar {
+      width: 95%;
+      max-width: 1200px;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .back-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .back-icon-circle {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #000;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: 0.2s;
+      background: #fff;
+      color: #000;
+    }
+
+    .back-btn:hover .back-icon-circle {
+      background: #000;
+      color: #fff;
+    }
+
+    .nav-back-text {
+      font-family: "Inter", sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #000;
+      margin: 0;
+      cursor: pointer;
+    }
+
+    .main-content-card {
+      background: #ffffff;
+      border: 1px solid #e0e0e0;
+      border-radius: 20px;
+      padding: 40px;
+      width: 95%;
+      max-width: 1200px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+
+    .card-page-title {
+      font-family: "Arimo", sans-serif;
+      font-weight: 700;
+      font-size: 34px;
+      color: #000000;
+      text-align: center;
+      margin: 0;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      font-size: 16px;
+      color: #454545;
+      text-align: center;
+      font-family: "Arimo", sans-serif;
+      margin-bottom: 10px;
+      line-height: 1.5;
+    }
+
+    .settings-section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      font-family: "Arimo", sans-serif;
+      margin-top: 10px;
+    }
+
+    .st-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ffffff;
+      border: 1px solid #e4e7eb;
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .st-item:hover {
+      border-color: #000;
+      background: #fafafa;
+    }
+
+    .st-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .st-icon-box {
+      width: 40px;
+      height: 40px;
+      background: #f3f4f6;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1f2937;
+    }
+
+    .st-text h4 {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 600;
+      color: #111827;
+      font-family: "Inter", sans-serif;
+    }
+
+    .st-text p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: #6b7280;
+    }
+
+    .st-arrow {
+      color: #9ca3af;
+    }
+
+    .st-item:hover .st-arrow {
+      color: #111827;
+    }
+
+    .st-dropdown-wrapper {
+      position: relative;
+    }
+
+    .st-dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      margin-top: 8px;
+      z-index: 50;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+    }
+
+    .st-dropdown-wrapper.open .st-dropdown-menu {
+      display: block;
+    }
+
+    .st-option {
+      padding: 12px 20px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      border-bottom: 1px solid #f3f4f6;
+    }
+
+    .st-option:last-child {
+      border-bottom: none;
+    }
+
+    .st-option:hover {
+      background: #f9fafb;
+    }
+
+    .st-option.active {
+      color: #2563eb;
+      background: #eff6ff;
+      font-weight: 600;
+    }
+
+    .theme-label {
+      margin: 0 0 12px 0;
+      font-size: 15px;
+      font-weight: 600;
+      font-family: "Inter", sans-serif;
+      color: #111827;
+    }
+
+    .st-theme-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .st-theme-box {
+      border: 1px solid #e4e7eb;
+      border-radius: 8px;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .st-theme-box svg {
+      width: 24px;
+      height: 24px;
+      color: #6b7280;
+    }
+
+    .st-theme-box span {
+      font-size: 14px;
+      font-weight: 500;
+      color: #374151;
+      font-family: "Inter", sans-serif;
+    }
+
+    .st-theme-box.active {
+      border-color: #000;
+      background: #f9fafb;
+    }
+
+    .st-theme-box.active svg {
+      color: #000;
+      fill: #000;
+    }
+
+    .st-theme-box.active span {
+      font-weight: 700;
+      color: #000;
+    }
+
+    .st-footer {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-logout {
+      background: #ef4444;
+      color: #ffffff;
+      height: 44px;
+      padding: 0 40px;
+      border-radius: 22px;
+      font-weight: 700;
+      font-size: 14px;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Arimo", sans-serif;
+      transition: background 0.2s;
+    }
+
+    .btn-logout:hover {
+      background: #dc2626;
+    }
+
+   
+    .locked-section {
+      position: relative;
+    }
+
+    .locked-content {
+      position: relative;
+      opacity: 0.6;
+      filter: blur(1px);
+    }
+
+    .locked-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(240, 240, 240, 0.65);
+      backdrop-filter: blur(2px);
+      z-index: 20;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 20px;
+
+      pointer-events: all;
+      cursor: not-allowed;
+    }
+
+    .locked-text {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 18px 26px;
+      border-radius: 12px;
+      text-align: center;
+      font-weight: 700;
+      color: #111;
+      font-family: "Inter", sans-serif;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .locked-text span {
+      display: block;
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #6b7280;
+    }
+
+    @media (max-width: 768px) {
+      .main-content-card {
+        padding: 20px;
+      }
+
+      .ph-page-wrapper {
+        padding-top: 100px;
+      }
+    }
+  </style>
+</head>
+
+<header class="ph-header">
+  <div class="ph-header-content">
+    <a href="customer-app.html" class="ph-logo">
+      PhotoHunt
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+        <circle cx="12" cy="13" r="4"></circle>
+      </svg>
+    </a>
+    <button class="ph-cta-btn" onclick="window.location.href='chat.html'">
+      Chat
+    </button>
+  </div>
+</header>
+
+<body>
+  <div class="ph-page-wrapper">
+    <div class="navigation-bar">
+      <button class="back-btn" onclick="window.location.href='customer-app.html'">
+        <div class="back-icon-circle">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+        </div>
+      </button>
+      <div class="nav-back-text" onclick="window.location.href='customer-app'">
+        Kembali ke Dashboard
+      </div>
+    </div>
+
+    <main class="main-content-card">
+      <div>
+        <h1 class="card-page-title">Pengaturan</h1>
+        <div class="page-subtitle">
+          Sesuaikan preferensi aplikasi sesuai kebutuhan Anda
+        </div>
+      </div>
+
+      <section>
+        <div class="settings-section-title">Akun</div>
+
+        <div class="st-item" onclick="window.location.href='kelolaprofile.html'">
+          <div class="st-left">
+            <div class="st-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="st-text">
+              <h4>Kelola Profil</h4>
+              <p>Ubah nama, email, dan password</p>
+            </div>
+          </div>
+          <svg class="st-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+      </section>
+
+      <section class="locked-section">
+        <div class="settings-section-title">Preferensi</div>
+
+        <div class="locked-content">
+          <div class="st-dropdown-wrapper" id="langDropdown">
+            <div class="st-item st-trigger">
+              <div class="st-left">
+                <div class="st-icon-box">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="2" y1="12" x2="22" y2="12"></line>
+                    <path
+                      d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                    </path>
+                  </svg>
+                </div>
+                <div class="st-text">
+                  <h4>Bahasa</h4>
+                  <p id="currentLangLabel">Bahasa Indonesia</p>
+                </div>
+              </div>
+              <svg class="st-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
+            <div class="st-dropdown-menu">
+              <div class="st-option active" data-lang="id">
+                Bahasa Indonesia
+              </div>
+              <div class="st-option" data-lang="en">English (US)</div>
+              <div class="st-option" data-lang="jp">日本語</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px">
+            <h4 class="theme-label">Tema Tampilan</h4>
+
+            <div class="st-theme-grid">
+              <div class="st-theme-box active" data-theme="light">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <line x1="12" y1="1" x2="12" y2="3"></line>
+                  <line x1="12" y1="21" x2="12" y2="23"></line>
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                  <line x1="1" y1="12" x2="3" y2="12"></line>
+                  <line x1="21" y1="12" x2="23" y2="12"></line>
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+                <span>Siang (Light)</span>
+              </div>
+              <div class="st-theme-box" data-theme="dark">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <span>Malam (Dark)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="locked-overlay">
+          <div class="locked-text">
+            Fitur lainnya pada update lanjutan
+            <span>More features coming soon</span>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="settings-section-title">Aktivitas</div>
+
+        <div class="st-item" onclick="window.location.href='history.html'">
+          <div class="st-left">
+            <div class="st-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div class="st-text">
+              <h4>Histori Pemesanan</h4>
+              <p>Lihat riwayat reservasi Anda</p>
+            </div>
+          </div>
+          <svg class="st-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </div>
+
+      </section>
+
+      <div class="st-footer">
+        <button class="btn-logout" id="spLogout">Keluar Akun</button>
+      </div>
+    </main>
+  </div>
+
+  <script src="./js/pengaturan.js" defer></script>
+</body>
+
+</html>

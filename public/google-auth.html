@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Choose Account - PhotoHunt</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      .layout-auth-user {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #ffffff;
+        box-sizing: border-box;
+        padding: 40px 20px;
+        font-family: "Inter", sans-serif;
+        position: relative;
+      }
+
+      .auth-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        box-sizing: border-box;
+      }
+
+      .auth-container * {
+        box-sizing: border-box;
+      }
+
+      .phlu-content-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-width: 440px;
+        gap: 20px;
+      }
+
+      .phlu-header-group {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      .phlu-brand-container {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 5px;
+      }
+
+      .phlu-brand {
+        font-family: "Inter", sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        color: #000;
+        letter-spacing: -0.02em;
+      }
+
+      .phlu-camera-svg {
+        width: 42px;
+        height: 42px;
+        color: #000;
+      }
+
+      .phlu-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #000;
+      }
+
+      .phlu-subtitle {
+        font-size: 16px;
+        color: #000;
+        text-align: center;
+        font-weight: 400;
+      }
+
+      .phlu-account-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+      }
+
+      .phlu-account-card {
+        width: 100%;
+        border: 1px solid #e0e0e0;
+        border-radius: 12px;
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        cursor: pointer;
+        background: #fff;
+        transition: background-color 0.2s, border-color 0.2s;
+      }
+
+      .phlu-account-card:hover {
+        background-color: #f9f9f9;
+        border-color: #bdbdbd;
+      }
+
+      .phlu-account-card.selected {
+        background-color: #f0f0f0;
+        border-color: #000;
+      }
+
+      .phlu-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background-color: #eeeeee;
+        overflow: hidden;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .phlu-avatar-svg {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .phlu-account-info {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .phlu-account-name {
+        font-size: 16px;
+        font-weight: 600;
+        color: #000;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .phlu-account-email {
+        font-size: 14px;
+        font-weight: 400;
+        color: #828282;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .phlu-use-another {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 0;
+        cursor: pointer;
+        color: #000;
+        font-weight: 500;
+        font-size: 16px;
+      }
+      .phlu-use-another:hover {
+        opacity: 0.7;
+      }
+      .phlu-plus-icon {
+        width: 20px;
+        height: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .phlu-google-btn {
+        width: 100%;
+        height: 48px;
+        border-radius: 8px;
+        background: #f2f2f2;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        transition: background 0.2s;
+        margin-top: 10px;
+      }
+
+      .phlu-google-btn:hover {
+        background: #e0e0e0;
+      }
+
+      .phlu-google-logo {
+        width: 24px;
+        height: 24px;
+        position: absolute;
+        left: 16px;
+      }
+
+      .phlu-google-text {
+        font-size: 16px;
+        font-weight: 600;
+        color: #000;
+      }
+
+      .phlu-back-btn {
+        position: absolute;
+        top: 40px;
+        left: 40px;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        font-size: 24px;
+        transition: background 0.2s;
+      }
+      .phlu-back-btn:hover {
+        background: #f5f5f5;
+      }
+
+      .phlu-terms {
+        font-size: 14px;
+        text-align: center;
+        line-height: 1.5;
+        color: #828282;
+        margin-top: 20px;
+      }
+      .phlu-strong {
+        color: #000;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      @media (max-width: 600px) {
+        .phlu-back-btn {
+          top: 20px;
+          left: 10px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="layout-auth-user">
+      <div class="phlu-back-btn" id="btnBack">←</div>
+
+      <div class="auth-container">
+        <div class="phlu-content-wrapper">
+          <div class="phlu-header-group">
+            <div class="phlu-brand-container">
+              <div class="phlu-brand">PhotoHunt</div>
+              <svg
+                class="phlu-camera-svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M7 6C7 4.89543 7.89543 4 9 4H15C16.1046 4 17 4.89543 17 6H20C21.1046 6 22 6.89543 22 8V18C22 19.1046 21.1046 20 20 20H4C2.89543 20 2 19.1046 2 18V8C2 6.89543 2.89543 6 4 6H7Z"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+                <circle
+                  cx="12"
+                  cy="13"
+                  r="4"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <div class="phlu-title">Create an account</div>
+            <div class="phlu-subtitle">Choose an account to continue</div>
+          </div>
+
+          <div class="phlu-account-list">
+            <div
+              class="phlu-account-card"
+              onclick="selectAccount(this, 'Ethan Johnson')"
+            >
+              <div class="phlu-avatar">
+                <svg
+                  class="phlu-avatar-svg"
+                  viewBox="0 0 40 40"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="20" cy="20" r="20" fill="#E3F2FD" />
+                  <path
+                    d="M20 20C23.3137 20 26 17.3137 26 14C26 10.6863 23.3137 8 20 8C16.6863 8 14 10.6863 14 14C14 17.3137 16.6863 20 20 20ZM20 22C15.3333 22 6 24.3333 6 29V32H34V29C34 24.3333 24.6667 22 20 22Z"
+                    fill="#2196F3"
+                  />
+                </svg>
+              </div>
+              <div class="phlu-account-info">
+                <span class="phlu-account-name">Ethan Johnson</span>
+                <span class="phlu-account-email">ethan.johnson@gmail.com</span>
+              </div>
+            </div>
+
+            <div
+              class="phlu-account-card"
+              onclick="selectAccount(this, 'Emma Collins')"
+            >
+              <div class="phlu-avatar">
+                <svg
+                  class="phlu-avatar-svg"
+                  viewBox="0 0 40 40"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="20" cy="20" r="20" fill="#FCE4EC" />
+                  <path
+                    d="M20 20C23.3137 20 26 17.3137 26 14C26 10.6863 23.3137 8 20 8C16.6863 8 14 10.6863 14 14C14 17.3137 16.6863 20 20 20ZM20 22C15.3333 22 6 24.3333 6 29V32H34V29C34 24.3333 24.6667 22 20 22Z"
+                    fill="#E91E63"
+                  />
+                </svg>
+              </div>
+              <div class="phlu-account-info">
+                <span class="phlu-account-name">Emma Collins</span>
+                <span class="phlu-account-email">emma.collins@gmail.com</span>
+              </div>
+            </div>
+
+            <div
+              class="phlu-account-card"
+              onclick="selectAccount(this, 'Chloe Hartman')"
+            >
+              <div class="phlu-avatar">
+                <svg
+                  class="phlu-avatar-svg"
+                  viewBox="0 0 40 40"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="20" cy="20" r="20" fill="#E8F5E9" />
+                  <path
+                    d="M20 20C23.3137 20 26 17.3137 26 14C26 10.6863 23.3137 8 20 8C16.6863 8 14 10.6863 14 14C14 17.3137 16.6863 20 20 20ZM20 22C15.3333 22 6 24.3333 6 29V32H34V29C34 24.3333 24.6667 22 20 22Z"
+                    fill="#4CAF50"
+                  />
+                </svg>
+              </div>
+              <div class="phlu-account-info">
+                <span class="phlu-account-name">Chloe Hartman</span>
+                <span class="phlu-account-email">chloe.hartman@gmail.com</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="phlu-use-another" id="btnUseAnother">
+            <div class="phlu-plus-icon">
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M12 5V19M5 12H19"
+                  stroke="black"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </div>
+            <span>Use another account</span>
+          </div>
+
+          <div class="phlu-google-btn" id="btnGoogleContinue">
+            <svg
+              class="phlu-google-logo"
+              viewBox="0 0 48 48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill="#EA4335"
+                d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"
+              />
+              <path
+                fill="#4285F4"
+                d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+              />
+              <path
+                fill="#FBBC05"
+                d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+              />
+              <path
+                fill="#34A853"
+                d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+              />
+            </svg>
+            <span class="phlu-google-text">Continue</span>
+          </div>
+
+          <div class="phlu-terms">
+            By clicking continue, you agree to our<br />
+            <span class="phlu-strong">Terms of Service</span> and
+            <span class="phlu-strong">Privacy Policy</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/photohunt-backend/public/js/google-auth.js" defer></script>
+  </body>
+</html>
