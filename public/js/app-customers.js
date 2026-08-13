@@ -7,6 +7,8 @@ const API_BASE_URL =
             ? (window.location.port === "3000" || window.location.port === "" ? window.location.origin : "http://localhost:3000")
             : window.location.origin));
 
+const LOCAL_PLACEHOLDER = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='225' viewBox='0 0 400 225'%3E%3Crect width='400' height='225' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%239ca3af'%3ENo Image%3C/text%3E%3C/svg%3E";
+
 const scope = {
   category: localStorage.getItem("customerCategory") || "all",
   city: localStorage.getItem("customerCity") || localStorage.getItem("userCity") || "all",
@@ -274,7 +276,7 @@ const scope = {
       let alternativesHTML = "";
       if (data.alternatives && data.alternatives.length > 0) {
         const altCards = data.alternatives.map(studio => {
-          let imageSrc = studio.gallery_image ? `${API_BASE_URL}/images/studios/${studio.gallery_image}` : (studio.image ? `${API_BASE_URL}/images/studios/${studio.image}` : 'https://via.placeholder.com/400x225?text=No+Image');
+          let imageSrc = studio.gallery_image ? `${API_BASE_URL}/images/studios/${studio.gallery_image}` : (studio.image ? `${API_BASE_URL}/images/studios/${studio.image}` : LOCAL_PLACEHOLDER);
           const reasonItems = (studio.matchReasons || []).slice(0, 3).map(r => {
             const isMatch = r.startsWith("✓");
             const isPartial = r.startsWith("~");
@@ -284,7 +286,7 @@ const scope = {
 
           return `
             <div class="studio-card" style="position: relative; display: flex; flex-direction: column; height: 100%; opacity: 0.85; border: 1px solid #e5e7eb;" onclick="window.location.href='detail-studio.html?id=${studio.id}'">
-              <img class="studio-img" src="${imageSrc}" alt="${studio.name}" style="width: 100%; height: 190px; object-fit: cover; border-radius: 12px;" onerror="this.src='https://via.placeholder.com/400x225?text=Error+Loading'" />
+              <img class="studio-img" src="${imageSrc}" alt="${studio.name}" style="width: 100%; height: 190px; object-fit: cover; border-radius: 12px;" onerror="this.onerror=null; this.src='${LOCAL_PLACEHOLDER}';" />
               <div class="ai-match-badge" style="margin-top: 10px; background: #ef4444;">
                 <span>⚠️</span>
                 <span>Opsi Alternatif</span>
@@ -323,7 +325,7 @@ const scope = {
 
     // 4. Render Primary Candidate Studios
     const primaryCardsHTML = data.studios.map(studio => {
-      let imageSrc = studio.gallery_image ? `${API_BASE_URL}/images/studios/${studio.gallery_image}` : (studio.image ? `${API_BASE_URL}/images/studios/${studio.image}` : 'https://via.placeholder.com/400x225?text=No+Image');
+      let imageSrc = studio.gallery_image ? `${API_BASE_URL}/images/studios/${studio.gallery_image}` : (studio.image ? `${API_BASE_URL}/images/studios/${studio.image}` : LOCAL_PLACEHOLDER);
       const reasonItems = (studio.matchReasons || []).slice(0, 4).map(r => {
         const isMatch = r.startsWith("✓");
         const isPartial = r.startsWith("~");
@@ -333,7 +335,7 @@ const scope = {
 
       return `
         <div class="studio-card" style="position: relative; display: flex; flex-direction: column; height: 100%; cursor: pointer;" onclick="scope.openStudioDetail('${studio.id}')">
-          <img class="studio-img" src="${imageSrc}" alt="${studio.name}" style="width: 100%; height: 190px; object-fit: cover; border-radius: 12px;" onerror="this.src='https://via.placeholder.com/400x225?text=Error+Loading'" />
+          <img class="studio-img" src="${imageSrc}" alt="${studio.name}" style="width: 100%; height: 190px; object-fit: cover; border-radius: 12px;" onerror="this.onerror=null; this.src='${LOCAL_PLACEHOLDER}';" />
           <div class="ai-match-badge" style="margin-top: 10px;">
             <span>✨</span>
             <span>${studio.matchScore}% Match</span>
@@ -397,7 +399,7 @@ const scope = {
       } else if (studio.image) {
         imageSrc = `${API_BASE_URL}/images/studios/${studio.image}`;
       } else {
-        imageSrc = 'https://via.placeholder.com/400x225?text=No+Image';
+        imageSrc = LOCAL_PLACEHOLDER;
       }
 
       let aiBadgeHTML = "";
@@ -428,7 +430,7 @@ const scope = {
           src="${imageSrc}" 
           alt="${studio.name}"
           style="width: 100%; height: 190px; object-fit: cover; border-radius: 12px;"
-          onerror="this.src='https://via.placeholder.com/400x225?text=Error+Loading'" 
+          onerror="this.onerror=null; this.src='${LOCAL_PLACEHOLDER}';" 
         />
         ${aiBadgeHTML}
         <div class="studio-name" style="font-weight: bold; margin-top: 8px; font-size: 16px;">${studio.name}</div>
