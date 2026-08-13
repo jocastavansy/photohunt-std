@@ -7,6 +7,7 @@ const http = require("http");
 const fs = require("fs");
 const { Server } = require("socket.io");
 const mongoose = require("mongoose");
+const { GoogleGenAI, Type } = require("@google/genai");
 
 const app = express();
 const server = http.createServer(app);
@@ -3751,6 +3752,248 @@ function processAISearch(studios, intent) {
   };
 }
 
+/* ================= GEMINI AI SEARCH NLP LAYER ================= */
+let genAIClient = null;
+if (process.env.GEMINI_API_KEY) {
+  try {
+    genAIClient = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  } catch (err) {
+    console.warn("⚠️ Failed to initialize GoogleGenAI client:", err.message);
+  }
+}
+
+const geminiResponseSchema = {
+  type: Type.OBJECT,
+  properties: {
+    purpose: { type: Type.STRING, nullable: true, description: "e.g. foto produk, foto keluarga, foto wisuda, pas foto, or null" },
+    people: { type: Type.INTEGER, nullable: true, description: "Number of people/capacity needed, or null" },
+    location: { type: Type.STRING, nullable: true, description: "Exact raw city/location name mentioned by user (e.g. 'bekasi', 'jakarta', 'tangerang'). DO NOT expand with province or full address." },
+    day: { type: Type.STRING, enum: ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu", "minggu"], nullable: true, description: "Explicit day of week in Indonesian, or null" },
+    relative_date: { type: Type.STRING, enum: ["hari ini", "besok", "lusa"], nullable: true, description: "Relative date token if user specified relative day instead of explicit day name" },
+    time: { type: Type.STRING, nullable: true, description: "24-hour time format 'HH:MM' (e.g. '20:00', '01:00', '00:00', '13:00', '08:00'), or null if ambiguous/unspecified" },
+    period: { type: Type.STRING, enum: ["pagi", "siang", "sore", "malam"], nullable: true, description: "General time period if no exact hour is specified" },
+    budget_value: { type: Type.NUMBER, nullable: true, description: "Numeric budget amount in IDR (e.g. 500000), or null" },
+    budget_type: { type: Type.STRING, enum: ["hard", "soft"], nullable: true, description: "hard if explicit max limit ('maksimal/max/dibawah'), soft if explicit approx target ('sekitar/kira-kira/kisaran'), or null if unspecified" },
+    category: { type: Type.STRING, enum: ["photobox", "photostudio"], nullable: true, description: "Category if specified" },
+    duration_minutes: { type: Type.INTEGER, nullable: true, description: "Duration requested in minutes (e.g. 120 for 2 jam), or null" },
+    duration_type: { type: Type.STRING, enum: ["exact", "minimum"], nullable: true, description: "exact if 'durasi/sesi 2 jam', minimum if 'minimal/butuh 2 jam'" },
+    facilities_required: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Facilities strictly required (e.g. ['Lighting', 'AC'])" },
+    facilities_preferred: { type: Type.ARRAY, items: { type: Type.STRING }, description: "Facilities preferred/optional (e.g. ['Free Wifi'])" },
+    is_ambiguous: { type: Type.BOOLEAN, description: "True if time is ambiguous like 'jam 8' without pagi/malam context" },
+    ambiguity_message: { type: Type.STRING, nullable: true, description: "Clarification prompt when is_ambiguous is true" }
+  },
+  required: ["is_ambiguous"]
+};
+
+function validateGeminiOutput(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  if (typeof raw.is_ambiguous !== "boolean") return null;
+
+  ["purpose", "location", "day", "relative_date", "time", "period", "budget_type", "category", "duration_type", "ambiguity_message"].forEach(k => {
+    if (typeof raw[k] === "string") {
+      raw[k] = raw[k].trim();
+      if (raw[k] === "") raw[k] = null;
+    }
+  });
+
+  if (raw.time !== null && raw.time !== undefined) {
+    if (typeof raw.time !== "string" || !/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(raw.time)) {
+      return null;
+    }
+  }
+
+  if (raw.people !== null && raw.people !== undefined) {
+    if (typeof raw.people !== "number" || raw.people <= 0) return null;
+  }
+  if (raw.budget_value !== null && raw.budget_value !== undefined) {
+    if (typeof raw.budget_value !== "number" || raw.budget_value <= 0) return null;
+  }
+  if (raw.duration_minutes !== null && raw.duration_minutes !== undefined) {
+    if (typeof raw.duration_minutes !== "number" || raw.duration_minutes <= 0) return null;
+  }
+
+  const validDays = ["senin", "selasa", "rabu", "kamis", "jumat", "sabtu", "minggu"];
+  if (raw.day !== null && raw.day !== undefined && !validDays.includes(String(raw.day).toLowerCase())) return null;
+
+  const validRelDates = ["hari ini", "besok", "lusa"];
+  if (raw.relative_date !== null && raw.relative_date !== undefined && !validRelDates.includes(String(raw.relative_date).toLowerCase())) return null;
+
+  const validPeriods = ["pagi", "siang", "sore", "malam"];
+  if (raw.period !== null && raw.period !== undefined && !validPeriods.includes(String(raw.period).toLowerCase())) return null;
+
+  const validBudgets = ["hard", "soft"];
+  if (raw.budget_type !== null && raw.budget_type !== undefined && !validBudgets.includes(String(raw.budget_type))) return null;
+
+  const validCategories = ["photobox", "photostudio"];
+  if (raw.category !== null && raw.category !== undefined && !validCategories.includes(String(raw.category).toLowerCase())) return null;
+
+  const validDurations = ["exact", "minimum"];
+  if (raw.duration_type !== null && raw.duration_type !== undefined && !validDurations.includes(String(raw.duration_type).toLowerCase())) return null;
+
+  if (raw.facilities_required !== null && raw.facilities_required !== undefined) {
+    if (!Array.isArray(raw.facilities_required)) return null;
+    if (raw.facilities_required.some(f => typeof f !== "string")) return null;
+  }
+  if (raw.facilities_preferred !== null && raw.facilities_preferred !== undefined) {
+    if (!Array.isArray(raw.facilities_preferred)) return null;
+    if (raw.facilities_preferred.some(f => typeof f !== "string")) return null;
+  }
+
+  if (raw.location !== null && raw.location !== undefined) {
+    if (typeof raw.location !== "string" || raw.location.includes(",")) return null;
+  }
+
+  return raw;
+}
+
+function mapGeminiOutputToCanonicalIntent(promptStr, raw) {
+  const intent = {
+    prompt: promptStr,
+    purpose: raw.purpose ? String(raw.purpose).trim().toLowerCase() : null,
+    people: raw.people && raw.people > 0 ? Math.round(raw.people) : null,
+    location: raw.location ? String(raw.location).trim().toLowerCase() : null,
+    date: null,
+    day: null,
+    time: raw.time || null,
+    period: raw.period ? String(raw.period).trim().toLowerCase() : null,
+    budget_max: null,
+    budget_target: null,
+    budget_type: null,
+    facilities_required: [],
+    facilities_preferred: [],
+    category: raw.category ? String(raw.category).trim().toLowerCase() : null,
+    duration: raw.duration_minutes && raw.duration_minutes > 0 ? Math.round(raw.duration_minutes) : null,
+    duration_type: raw.duration_type || null,
+    location_type: null,
+    capacity_type: null,
+    category_type: null,
+    isAmbiguous: !!raw.is_ambiguous,
+    ambiguityMessage: raw.ambiguity_message || null
+  };
+
+  if (raw.day) {
+    intent.day = String(raw.day).trim().toLowerCase();
+  } else if (raw.relative_date) {
+    const rel = String(raw.relative_date).trim().toLowerCase();
+    const todayIdx = new Date().getDay();
+    const dayNames = ["minggu", "senin", "selasa", "rabu", "kamis", "jumat", "sabtu"];
+    if (rel === "lusa") intent.day = dayNames[(todayIdx + 2) % 7];
+    else if (rel === "besok") intent.day = dayNames[(todayIdx + 1) % 7];
+    else if (rel === "hari ini") intent.day = dayNames[todayIdx];
+  }
+
+  if (raw.budget_value && raw.budget_value > 0) {
+    const bVal = raw.budget_value;
+    const bType = raw.budget_type;
+    if (bType === "hard") {
+      intent.budget_type = "hard";
+      intent.budget_max = bVal;
+    } else {
+      intent.budget_type = "soft";
+      intent.budget_target = bVal;
+      intent.budget_max = bVal * 1.5;
+    }
+  }
+
+  const facilityKeywords = [
+    { name: "Lighting", terms: ["lighting", "lampu", "light"] },
+    { name: "Free Wifi", terms: ["wifi", "internet"] },
+    { name: "AC", terms: ["ac", "pendingin", "air conditioner"] },
+    { name: "Props & Aksesoris", terms: ["props", "properti", "aksesoris", "kostum"] },
+    { name: "Area Cermin", terms: ["cermin", "touch-up", "makeup", "kaca"] },
+    { name: "Indoor Studio", terms: ["indoor", "ruangan"] },
+    { name: "Background Putih", terms: ["background putih", "latar putih", "white background", "backdrop putih"] },
+    { name: "Background Hitam", terms: ["background hitam", "latar hitam", "black background", "backdrop hitam"] }
+  ];
+
+  if (Array.isArray(raw.facilities_required)) {
+    raw.facilities_required.forEach(reqFacName => {
+      const targetStr = String(reqFacName).toLowerCase();
+      const match = facilityKeywords.find(f =>
+        f.name.toLowerCase() === targetStr || f.terms.some(t => targetStr.includes(t))
+      );
+      if (match && !intent.facilities_required.some(f => f.name === match.name)) {
+        intent.facilities_required.push(match);
+      }
+    });
+  }
+
+  if (Array.isArray(raw.facilities_preferred)) {
+    raw.facilities_preferred.forEach(prefFacName => {
+      const targetStr = String(prefFacName).toLowerCase();
+      const match = facilityKeywords.find(f =>
+        f.name.toLowerCase() === targetStr || f.terms.some(t => targetStr.includes(t))
+      );
+      if (match && !intent.facilities_preferred.some(f => f.name === match.name) && !intent.facilities_required.some(f => f.name === match.name)) {
+        intent.facilities_preferred.push(match);
+      }
+    });
+  }
+
+  if (intent.location) {
+    intent.location_type = detectRequirementType(promptStr.toLowerCase(), promptStr.toLowerCase().indexOf(intent.location));
+  }
+  if (intent.people) {
+    intent.capacity_type = "required";
+  }
+  if (intent.category) {
+    intent.category_type = "required";
+  }
+
+  return intent;
+}
+
+async function parseNaturalLanguageIntentWithGemini(promptStr) {
+  if (!promptStr || typeof promptStr !== "string") {
+    return { prompt: "", isAmbiguous: false };
+  }
+
+  if (genAIClient) {
+    try {
+      const systemInstruction = `You are an NLU parser for a photo studio booking service in Indonesia.
+Extract structured intent JSON from user prompt.
+CRITICAL RULES:
+1. Time parsing (24-hour HH:MM format):
+   - "jam 8 malam" -> "20:00"
+   - "jam 1 malam" -> "01:00"
+   - "jam 12 malam" -> "00:00"
+   - "jam 1 siang" -> "13:00"
+   - "jam 8 pagi" -> "08:00"
+   - "jam 1", "jam 8", "jam 12" without period context -> is_ambiguous: true, time: null, ambiguity_message: "Maksudnya jam X pagi atau jam X malam?"
+2. Location: Extract exact raw location string (e.g. "bekasi"). DO NOT expand with province or full address.
+3. Budget:
+   - "budget maksimal 500 ribu" -> budget_value: 500000, budget_type: "hard"
+   - "budget sekitar 500 ribu" -> budget_value: 500000, budget_type: "soft"
+   - "budget 500 ribu" -> budget_value: 500000, budget_type: null
+4. Relative date: Extract "hari ini", "besok", or "lusa" if mentioned.`;
+
+      const response = await genAIClient.models.generateContent({
+        model: "gemini-3.6-flash",
+        contents: [
+          { role: "user", parts: [{ text: systemInstruction + "\n\nUser prompt: " + promptStr }] }
+        ],
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: geminiResponseSchema
+        }
+      });
+
+      const textOutput = response.text;
+      if (textOutput) {
+        const rawJson = JSON.parse(textOutput);
+        const validated = validateGeminiOutput(rawJson);
+        if (validated) {
+          return mapGeminiOutputToCanonicalIntent(promptStr, validated);
+        }
+      }
+    } catch (err) {
+      console.warn("⚠️ Gemini AI Intent Extraction failed, falling back to Regex parser:", err.message);
+    }
+  }
+
+  return parseNaturalLanguageIntent(promptStr);
+}
+
 app.post("/api/ai-search", async (req, res) => {
   try {
     const { prompt } = req.body;
@@ -3758,7 +4001,7 @@ app.post("/api/ai-search", async (req, res) => {
       return res.status(400).json({ error: "Prompt pencarian tidak boleh kosong." });
     }
 
-    const intent = parseNaturalLanguageIntent(prompt);
+    const intent = await parseNaturalLanguageIntentWithGemini(prompt);
 
     const studios = await Studio.find({ status: "active" }).lean();
     const studioIds = studios.map(s => s.id || s._id).filter(Boolean);

@@ -13,6 +13,7 @@ backend/test_fix_verification.js
 backend/test-ai-search.js
 backend/test_time_normalization.js
 backend/fix_refund_amt.js
+backend/test_gemini_intent.js
 
 # Database
 photohunt.gz
