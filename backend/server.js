@@ -1,4 +1,4 @@
-try { require("dotenv").config(); } catch(e) {}
+try { require("dotenv").config(); } catch (e) { }
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -13,7 +13,7 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 /* ================= MONGOOSE CONNECTION ================= */
-const mongoURI = process.env.MONGO_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/photohunt_backend";
+const mongoURI = process.env.MONGO_URI || process.env.MONGO_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/photohunt_backend";
 mongoose.connect(mongoURI)
   .then(() => console.log("✅ MongoDB Connected. Database:", mongoose.connection.name))
   .catch(err => console.error("❌ MongoDB Connection Error:", err.message));
