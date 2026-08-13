@@ -233,7 +233,7 @@ async function updateStatus(id, newStatus) {
 }
 
 function viewProof(imageName) {
-    const imgUrl = `/images/payments/${imageName}`;
+    const imgUrl = `${API_BASE_URL}/images/payments/${imageName}`;
     window.open(imgUrl, '_blank');
 }
 

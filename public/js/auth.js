@@ -45,7 +45,7 @@ if (signupForm) {
                             : window.location.origin));
 
             // KIRIM KE SERVER
-            const res = await fetch(`${API_BASE_URL}/signup`, {
+            const res = await fetch(`${API_BASE_URL}/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ name, email, password, role, phone })

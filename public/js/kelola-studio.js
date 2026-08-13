@@ -87,7 +87,7 @@ function populateUI(data) {
     const imgElement = document.getElementById("studioMainImage");
 
     if (imgElement) {
-        const baseUrl = "/images/studios/";
+        const baseUrl = `${API_BASE_URL}/images/studios/`;
         const timestamp = new Date().getTime(); // Anti-cache biar logo baru langsung muncul
 
         // Prioritas 1: data.logo (Kolom khusus logo)
@@ -97,7 +97,7 @@ function populateUI(data) {
         } else if (data.image) {
             imgElement.src = `${baseUrl}${data.image}?t=${timestamp}`;
         } else {
-            imgElement.src = "https://via.placeholder.com/300?text=No+Logo";
+            imgElement.src = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300' viewBox='0 0 300 300'%3E%3Crect width='300' height='300' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%239ca3af'%3ENo Logo%3C/text%3E%3C/svg%3E";
         }
 
         // TWEAK TAMPILAN:

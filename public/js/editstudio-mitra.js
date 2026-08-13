@@ -96,16 +96,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Logo Preview
             if (data.logo) {
-                ui.logoPreview.src = `/images/studios/${data.logo}?t=${new Date().getTime()}`;
+                ui.logoPreview.src = `${API_BASE_URL}/images/studios/${data.logo}?t=${new Date().getTime()}`;
             } else {
-                ui.logoPreview.src = "https://placehold.co/100x100?text=No+Logo";
+                ui.logoPreview.src = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='12' fill='%239ca3af'%3ENo Logo%3C/text%3E%3C/svg%3E";
             }
 
             // QRIS Preview
             const qrisPreview = document.getElementById("qrisPreview");
             const qrisPlaceholder = document.getElementById("qrisPlaceholder");
             if (data.qris_image) {
-                qrisPreview.src = `/images/studios/${data.qris_image}?t=${new Date().getTime()}`;
+                qrisPreview.src = `${API_BASE_URL}/images/studios/${data.qris_image}?t=${new Date().getTime()}`;
                 qrisPreview.style.display = "block";
                 qrisPlaceholder.style.display = "none";
             } else {
@@ -167,7 +167,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const json = await res.json();
 
                 if (json.success) {
-                    ui.logoPreview.src = `/images/studios/${json.logo}?t=${new Date().getTime()}`;
+                    ui.logoPreview.src = `${API_BASE_URL}/images/studios/${json.logo}?t=${new Date().getTime()}`;
                     alert("Logo berhasil diperbarui!");
                 } else {
                     alert(json.message);
@@ -217,7 +217,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const json = await res.json();
 
                 if (json.success) {
-                    qrisPreview.src = `/images/studios/${json.qris_image}?t=${new Date().getTime()}`;
+                    qrisPreview.src = `${API_BASE_URL}/images/studios/${json.qris_image}?t=${new Date().getTime()}`;
                     qrisPreview.style.display = "block";
                     const ph = document.getElementById("qrisPlaceholder");
                     if (ph) ph.style.display = "none";
@@ -303,7 +303,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const div = document.createElement("div");
             div.className = "gallery-item";
             div.innerHTML = `
-                <img src="/images/studios/${img.image}" alt="Foto">
+                <img src="${API_BASE_URL}/images/studios/${img.image}" alt="Foto">
                 <button type="button" class="btn-delete-img" title="Hapus">✕</button>
             `;
             div.querySelector(".btn-delete-img").onclick = () => deleteImage(img.id);

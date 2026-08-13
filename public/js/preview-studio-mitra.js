@@ -119,9 +119,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 const imgEl = document.createElement("img");
                 imgEl.className = "gallery-img";
                 // Pastikan path image sesuai folder backend
-                imgEl.src = `/images/studios/${imgName}`;
+                imgEl.src = imgName.startsWith("http") ? imgName : `${API_BASE_URL}/images/studios/${imgName}`;
                 imgEl.onerror = function () {
-                    this.src = 'https://placehold.co/480x350?text=Image+Error';
+                    this.onerror = null;
+                    this.src = "data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='480' height='350' viewBox='0 0 480 350'%3E%3Crect width='480' height='350' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%239ca3af'%3EImage Error%3C/text%3E%3C/svg%3E";
                 };
                 ui.galleryScroll.appendChild(imgEl);
             });

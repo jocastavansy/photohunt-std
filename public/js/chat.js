@@ -121,7 +121,8 @@ async function openChat(partnerId, partnerName, partnerLogo = null) {
         headerAvatar.style.backgroundImage = "none";
 
         if (partnerLogo && partnerLogo !== "null") {
-            headerAvatar.style.backgroundImage = `url('/images/studios/${partnerLogo}')`;
+            const logoUrl = partnerLogo.startsWith("http") ? partnerLogo : `${API_BASE_URL}/images/studios/${partnerLogo}`;
+            headerAvatar.style.backgroundImage = `url('${logoUrl}')`;
         } else {
             headerAvatar.style.backgroundColor = "#ddd";
             headerAvatar.innerText = getInitials(currentPartnerName);
@@ -189,7 +190,8 @@ async function loadSidebarHistory() {
 
             let avatarHtml;
             if (pLogo) {
-                avatarHtml = `<div class="avatar" style="background-image: url('/images/studios/${pLogo}');"></div>`;
+                const logoUrl = pLogo.startsWith("http") ? pLogo : `${API_BASE_URL}/images/studios/${pLogo}`;
+                avatarHtml = `<div class="avatar" style="background-image: url('${logoUrl}');"></div>`;
             } else {
                 avatarHtml = `<div class="avatar" style="background-color: #ddd;">${getInitials(pName)}</div>`;
             }

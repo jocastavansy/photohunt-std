@@ -100,7 +100,7 @@ async function loadBookingDetail(id) {
         // 2. Setup QRIS
         if (qrisImage) {
             const qrisImgElem = document.querySelector('.qris-img');
-            if (qrisImgElem) qrisImgElem.src = `/images/studios/${qrisImage}`;
+            if (qrisImgElem) qrisImgElem.src = qrisImage.startsWith("http") ? qrisImage : `${API_BASE_URL}/images/studios/${qrisImage}`;
         } else if (cardQRIS) {
             cardQRIS.style.display = 'none';
         }
