@@ -13,7 +13,7 @@ const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
 
 /* ================= MONGOOSE CONNECTION ================= */
-const mongoURI = process.env.MONGO_URI || process.env.MONGO_URL || process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/photohunt_backend";
+const mongoURI = process.env.MONGO_URI || process.env.MONGO_URL || process.env.MONGODB_URI || "mongodb+srv://vanisyarahma:photohuntwin@cluster0.flsgsfw.mongodb.net/photohunt_backend?appName=Cluster0";
 mongoose.connect(mongoURI)
   .then(() => console.log("✅ MongoDB Connected. Database:", mongoose.connection.name))
   .catch(err => console.error("❌ MongoDB Connection Error:", err.message));
@@ -121,6 +121,31 @@ const studioSchema = new mongoose.Schema({
 }, { ...schemaOptions, collection: "studios" });
 
 const Studio = mongoose.model("Studio", studioSchema);
+
+// SAFE DIAGNOSTIC ENDPOINT (Temporary diagnostic only)
+app.get("/api/safe-diagnostic", async (req, res) => {
+  try {
+    const dbName = mongoose.connection.name || (mongoose.connection.db ? mongoose.connection.db.databaseName : "unknown");
+    const collectionName = Studio.collection.name;
+    const totalStudios = await Studio.countDocuments();
+    const activeStudios = await Studio.countDocuments({ status: "active" });
+
+    res.json({
+      status: "ok",
+      database_name: dbName,
+      collection_name: collectionName,
+      total_studios: totalStudios,
+      active_studios: activeStudios,
+      env_variables_detected: {
+        has_MONGO_URI: Boolean(process.env.MONGO_URI),
+        has_MONGO_URL: Boolean(process.env.MONGO_URL),
+        has_MONGODB_URI: Boolean(process.env.MONGODB_URI)
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // 2.1 Studio Image Schema (for gallery images in studioImages collection)
 const studioImageSchema = new mongoose.Schema({
