@@ -14,14 +14,27 @@ const scope = {
 
   async loadStudios() {
     try {
+      console.log(`📡 Fetching studios from: ${API_BASE_URL}/studios?category=${this.category}&city=${this.city}`);
       const res = await fetch(
         `${API_BASE_URL}/studios?category=${this.category}&city=${this.city}`
       );
-      const studios = await res.json();
+      let studios = await res.json();
+
+      // Fallback: If current city/category filter yields 0 studios, automatically fetch all studios as fallback
+      if (Array.isArray(studios) && studios.length === 0 && (this.city !== "all" || this.category !== "all")) {
+        console.warn(`Filter (city: ${this.city}, category: ${this.category}) returned 0 studios. Falling back to all studios.`);
+        const fallbackRes = await fetch(`${API_BASE_URL}/studios?category=all&city=all`);
+        if (fallbackRes.ok) {
+          const fallbackData = await fallbackRes.json();
+          if (Array.isArray(fallbackData) && fallbackData.length > 0) {
+            studios = fallbackData;
+          }
+        }
+      }
+
       this.renderStudios(studios, false);
     } catch (err) {
-      console.error(err);
-      alert("Gagal memuat studio");
+      console.error("Gagal memuat studio:", err);
     }
   },
 
@@ -77,6 +90,12 @@ const scope = {
   },
 
   showAllStudios() {
+    this.category = "all";
+    this.city = "all";
+    localStorage.setItem("customerCategory", "all");
+    localStorage.setItem("customerCity", "all");
+    localStorage.setItem("userCity", "all");
+    this.syncCategoryTabUI();
     this.filterStudio("all");
   },
 

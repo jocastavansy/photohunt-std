@@ -950,10 +950,10 @@ app.get("/studios", async (req, res) => {
     const filter = { status: "active" };
 
     if (category && category.toLowerCase() !== "all" && category.toLowerCase() !== "semua") {
-      filter.category = new RegExp("^" + category + "$", "i");
+      filter.category = new RegExp(category, "i");
     }
     if (city && city.toLowerCase() !== "all" && city.toLowerCase() !== "semua") {
-      filter.city = new RegExp("^" + city + "$", "i");
+      filter.city = new RegExp(city, "i");
     }
 
     const studios = await Studio.find(filter).lean();
