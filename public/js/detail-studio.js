@@ -516,9 +516,20 @@ class StudioApp {
             const seninHours = getHours('senin');
             const sabtuHours = getHours('sabtu');
 
+            const formatImg = (imgStr) => {
+                if (!imgStr) return '';
+                if (imgStr.startsWith('http')) return imgStr;
+                const path = imgStr.startsWith('/') ? imgStr : `/images/studios/${imgStr.replace(/^images\/studios\//, '')}`;
+                return `${API_BASE_URL}${path}`;
+            };
+
+            const galleryImages = (data.images && data.images.length > 0)
+                ? data.images.map(i => formatImg(i.image))
+                : (data.studio?.logo || data.studio?.image ? [formatImg(data.studio.logo || data.studio.image)] : []);
+
             this.currentStudio = {
                 ...data.studio,
-                gallery: data.images.map(i => `/images/studios/${i.image}`),
+                gallery: galleryImages,
                 facilities: data.facilities.map(f => f.facility),
                 packages: data.packages,
                 schedules: data.schedules,
