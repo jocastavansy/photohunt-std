@@ -2642,19 +2642,6 @@ app.post("/chats", async (req, res) => {
       is_read: false
     });
 
-    const sStr = String(sender_id);
-    const rStr = String(receiver_id);
-    const ids = [sStr, rStr].sort();
-    const room = `room_${ids[0]}_${ids[1]}`;
-
-    io.to(room).emit("receive_message", {
-      sender_id,
-      receiver_id,
-      message,
-      timestamp: chat.createdAt || new Date().toISOString(),
-      created_at: chat.createdAt || new Date().toISOString()
-    });
-
     io.emit("new_message", {
       sender_id,
       receiver_id,
