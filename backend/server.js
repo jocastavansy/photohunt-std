@@ -3146,13 +3146,24 @@ function parseNaturalLanguageIntent(promptStr) {
     else if (text.includes("hari ini")) intent.day = dayNames[todayIdx];
   }
 
-  // 6. Location
-  const cities = [
-    "bekasi", "jakarta", "tangerang", "depok", "cikarang",
-    "kelapa gading", "tebet", "cipondoh", "bandung", "bogor"
-  ];
-  for (const c of cities) {
-    if (text.includes(c)) { intent.location = c; break; }
+  // 6. Location (Fallback Regex: Extracts 'di <location>' or matches known cities/districts)
+  let locPrepositionMatch = text.match(/(?:di|daerah|lokasi|sekitar|area)\s+([a-z0-9\s]+?)(?=\s*(?:budget|harga|jam|pukul|senin|selasa|rabu|kamis|jumat|sabtu|minggu|lusa|besok|hari|harus|wajib|kalau|kalo|dengan|foto|studio|paket|orang|pax|$))/i);
+  if (locPrepositionMatch && locPrepositionMatch[1]) {
+    const candidateLoc = locPrepositionMatch[1].trim();
+    const noiseWords = ["foto", "studio", "photobox", "photostudio", "produk", "keluarga", "wisuda", "pasfoto", "pas foto"];
+    if (!noiseWords.includes(candidateLoc) && candidateLoc.length >= 3) {
+      intent.location = candidateLoc;
+    }
+  }
+  if (!intent.location) {
+    const fallbackCities = [
+      "cikarang selatan", "cikarang utara", "tambun selatan", "cibitung",
+      "bekasi", "jakarta", "tangerang", "depok", "cikarang",
+      "kelapa gading", "tebet", "cipondoh", "bandung", "bogor"
+    ];
+    for (const c of fallbackCities) {
+      if (text.includes(c)) { intent.location = c; break; }
+    }
   }
 
   // Detect location requirement type (required by default, preferred if soft markers present)
@@ -3397,24 +3408,64 @@ function processAISearch(studios, intent) {
       continue;
     }
 
+// Helper: Normalize location strings for case-insensitive and whitespace-insensitive matching
+function normalizeLocationString(str) {
+  if (!str || typeof str !== 'string') return '';
+  return str.toLowerCase().trim().replace(/\s+/g, ' ');
+}
+
+// Helper: Determine if studio matches requested location (handles specific districts & general cities)
+function matchesStudioLocation(studio, requestedLocation) {
+  const reqNorm = normalizeLocationString(requestedLocation);
+  if (!reqNorm) return { match: true, reason: null };
+
+  const cityNorm = normalizeLocationString(studio.city);
+  const locNorm = normalizeLocationString(studio.location);
+  const descNorm = normalizeLocationString(studio.description);
+
+  // 1. Direct match on city field (e.g. studio.city === "bekasi")
+  if (cityNorm && (cityNorm === reqNorm || cityNorm.includes(reqNorm) || reqNorm.includes(cityNorm))) {
+    return {
+      match: true,
+      reason: `✓ Lokasi: ${studio.city || studio.location}`
+    };
+  }
+
+  // 2. Specific area/district match in studio.location (e.g. "Cikarang Selatan" inside address)
+  if (locNorm && locNorm.includes(reqNorm)) {
+    return {
+      match: true,
+      reason: `✓ Lokasi: ${studio.location || studio.city}`
+    };
+  }
+
+  // 3. Fallback check in studio description if location field is empty
+  if (!locNorm && descNorm && descNorm.includes(reqNorm)) {
+    return {
+      match: true,
+      reason: `✓ Lokasi: ${studio.name}`
+    };
+  }
+
+  return {
+    match: false,
+    reason: `✕ Lokasi: ${studio.city || studio.location || 'Tidak diketahui'} (dibutuhkan: ${requestedLocation})`
+  };
+}
     // ============================================================
     // HARD CONSTRAINT 2: Location (when required)
     // ============================================================
+    let locMatch = null;
+    if (intent.location) {
+      locMatch = matchesStudioLocation(studio, intent.location);
+    }
+
     if (intent.location && intent.location_type === 'required') {
-      const studioCity = (studio.city || '').trim().toLowerCase();
-      const studioLoc = (studio.location || '').trim().toLowerCase();
-      const reqLoc = intent.location.trim().toLowerCase();
-
-      // Primary: exact city match (consistent with Manual Search RegExp("^city$","i"))
-      const cityMatch = studioCity && studioCity === reqLoc;
-      // Fallback: address contains city name ONLY when city field is empty/missing
-      const addressFallbackMatch = !studioCity && studioLoc.includes(reqLoc);
-      const locationMatch = cityMatch || addressFallbackMatch;
-
-      if (!locationMatch) {
+      if (!locMatch || !locMatch.match) {
+        const failReason = locMatch ? locMatch.reason : `✕ Lokasi tidak sesuai (dibutuhkan: ${intent.location})`;
         alternatives.push({
           ...studio, matchScore: 0,
-          matchReasons: [`✕ Lokasi: ${studio.city || studio.location || 'Tidak diketahui'} (dibutuhkan: ${intent.location})`],
+          matchReasons: [failReason],
           failedConstraint: 'Lokasi tidak sesuai'
         });
         continue;
@@ -3536,7 +3587,8 @@ function processAISearch(studios, intent) {
     if (intent.day && availCheck.reason) reasons.push(availCheck.reason);
 
     if (intent.location && intent.location_type === 'required') {
-      reasons.push(`✓ Lokasi: ${studio.city || studio.location}`);
+      if (locMatch && locMatch.reason) reasons.push(locMatch.reason);
+      else reasons.push(`✓ Lokasi: ${studio.city || studio.location}`);
     }
 
     for (const facObj of intent.facilities_required) {
@@ -3605,14 +3657,9 @@ function processAISearch(studios, intent) {
     // SOFT: Preferred location (only when location_type is 'preferred', not hard-filtered)
     if (intent.location && intent.location_type === 'preferred') {
       totalWeight += 25;
-      const studioCity = (studio.city || '').trim().toLowerCase();
-      const studioLoc = (studio.location || '').trim().toLowerCase();
-      const reqLoc = intent.location.trim().toLowerCase();
-      const cityMatch = studioCity && studioCity === reqLoc;
-      const addressFallbackMatch = !studioCity && studioLoc.includes(reqLoc);
-      if (cityMatch || addressFallbackMatch) {
+      if (locMatch && locMatch.match) {
         earnedWeight += 25;
-        reasons.push(`✓ Lokasi di ${studio.city || studio.location}`);
+        reasons.push(locMatch.reason);
       } else {
         reasons.push(`~ Lokasi: ${studio.city || studio.location || 'Tidak diketahui'}`);
       }
