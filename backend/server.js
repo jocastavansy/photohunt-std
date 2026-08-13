@@ -118,7 +118,7 @@ const studioSchema = new mongoose.Schema({
     duration: { type: Number, default: 60 },
     break: { type: Number, default: 0 }
   }]
-}, schemaOptions);
+}, { ...schemaOptions, collection: "studios" });
 
 const Studio = mongoose.model("Studio", studioSchema);
 
@@ -947,13 +947,29 @@ app.post("/profile/upload-photo", uploadProfile.single("photo"), async (req, res
 app.get("/studios", async (req, res) => {
   try {
     const { category, city } = req.query;
-    const filter = { status: "active" };
+    const filter = {
+      $or: [
+        { status: "active" },
+        { status: { $exists: false } },
+        { status: null },
+        { status: "" }
+      ]
+    };
 
-    if (category && category.toLowerCase() !== "all" && category.toLowerCase() !== "semua") {
-      filter.category = new RegExp(category, "i");
+    if (category && typeof category === "string" && !["all", "semua", ""].includes(category.trim().toLowerCase())) {
+      filter.category = new RegExp(category.trim(), "i");
     }
-    if (city && city.toLowerCase() !== "all" && city.toLowerCase() !== "semua") {
-      filter.city = new RegExp(city, "i");
+
+    if (city && typeof city === "string" && !["all", "semua", ""].includes(city.trim().toLowerCase())) {
+      const cleanCity = city.trim();
+      filter.$and = [
+        {
+          $or: [
+            { city: new RegExp(cleanCity, "i") },
+            { location: new RegExp(cleanCity, "i") }
+          ]
+        }
+      ];
     }
 
     const studios = await Studio.find(filter).lean();
