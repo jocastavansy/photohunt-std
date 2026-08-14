@@ -129,12 +129,21 @@ const scope = {
       const tabText = tab.innerText.trim().toLowerCase();
       if (this.city === "all" && tabText === "semua") {
         tab.classList.add("active");
-      } else if (tabText === this.city.toLowerCase() || (this.city !== "all" && this.city.toLowerCase().includes(tabText))) {
+      } else if (this.city !== "all" && (tabText === this.city.toLowerCase() || this.city.toLowerCase().includes(tabText))) {
         tab.classList.add("active");
       } else {
         tab.classList.remove("active");
       }
     });
+
+    const locInput = document.querySelector(".js-input-location");
+    if (locInput) {
+      if (this.city && this.city !== "all") {
+        locInput.value = this.city.charAt(0).toUpperCase() + this.city.slice(1);
+      } else {
+        locInput.value = "";
+      }
+    }
   },
 
   async detectGPSLocation() {
@@ -148,24 +157,22 @@ const scope = {
         if (res.ok) {
           const data = await res.json();
           const addr = data.address || {};
-          const detectedCity = addr.city || addr.town || addr.county || addr.state_district || addr.region || "";
-          if (detectedCity) {
-            const lowerCity = detectedCity.toLowerCase();
-            let targetCity = lowerCity.replace(/kota|kabupaten/gi, "").trim();
-            if (lowerCity.includes("jakarta")) targetCity = "jakarta";
-            else if (lowerCity.includes("tangerang")) targetCity = "tangerang";
-            else if (lowerCity.includes("depok")) targetCity = "depok";
-            else if (lowerCity.includes("bekasi") || lowerCity.includes("cikarang")) targetCity = "bekasi";
-            else if (lowerCity.includes("bandung")) targetCity = "bandung";
-            else if (lowerCity.includes("bogor")) targetCity = "bogor";
+          const fullText = (JSON.stringify(data) + " " + JSON.stringify(addr)).toLowerCase();
+          
+          let targetCity = null;
+          if (fullText.includes("jakarta")) targetCity = "jakarta";
+          else if (fullText.includes("bekasi") || fullText.includes("cikarang")) targetCity = "bekasi";
+          else if (fullText.includes("tangerang")) targetCity = "tangerang";
+          else if (fullText.includes("depok")) targetCity = "depok";
+          else if (fullText.includes("bandung")) targetCity = "bandung";
+          else if (fullText.includes("bogor")) targetCity = "bogor";
 
-            if (targetCity) {
-              localStorage.setItem("customerCity", targetCity);
-              localStorage.setItem("userCity", targetCity);
-              this.city = targetCity;
-              this.syncCityTabUI();
-              this.loadStudios();
-            }
+          if (targetCity) {
+            localStorage.setItem("customerCity", targetCity);
+            localStorage.setItem("userCity", targetCity);
+            this.city = targetCity;
+            this.syncCityTabUI();
+            this.loadStudios();
           }
         }
       } catch (err) {
