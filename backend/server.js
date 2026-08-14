@@ -904,6 +904,13 @@ app.post("/api/auth/google", async (req, res) => {
     }
 
     if (user) {
+      // Backend Role Enforcement: Reject if existing Atlas user role does not match selected role
+      if (user.role && user.role !== selectedRole) {
+        return res.status(403).json({
+          message: `Gagal Masuk! Akun ini terdaftar sebagai "${user.role.toUpperCase()}", tapi kamu menekan tombol "${selectedRole.toUpperCase()}".`
+        });
+      }
+
       let modified = false;
       if (userPicture && !user.image) {
         user.image = userPicture;
