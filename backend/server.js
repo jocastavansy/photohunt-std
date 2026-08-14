@@ -377,30 +377,74 @@ function getMitraStudioFilter(mitraId) {
 }
 
 // Flexible query filter for bookings
-async function getMitraBookingFilter(mitraId) {
-  const numId = Number(mitraId);
-  const strId = String(mitraId);
+async function getMitraBookingFilter(mitraIdParam) {
+  let mitraUser = null;
+  if (mitraIdParam !== undefined && mitraIdParam !== null) {
+    if (!isNaN(Number(mitraIdParam))) {
+      mitraUser = await User.findOne({ id: Number(mitraIdParam) }).lean();
+    }
+    if (!mitraUser && mongoose.Types.ObjectId.isValid(mitraIdParam)) {
+      mitraUser = await User.findById(mitraIdParam).lean();
+    }
+    if (!mitraUser) {
+      mitraUser = await User.findOne({ $or: [{ id: mitraIdParam }, { _id: mitraIdParam }] }).lean();
+    }
+  }
+
+  const allMitraIds = new Set();
+  if (mitraIdParam !== undefined && mitraIdParam !== null) {
+    allMitraIds.add(mitraIdParam);
+    allMitraIds.add(String(mitraIdParam));
+    if (typeof mitraIdParam !== 'symbol' && typeof mitraIdParam !== 'object' && !isNaN(Number(mitraIdParam))) {
+      allMitraIds.add(Number(mitraIdParam));
+    }
+  }
+  if (mitraUser) {
+    if (mitraUser.id !== undefined && mitraUser.id !== null) {
+      allMitraIds.add(mitraUser.id);
+      allMitraIds.add(String(mitraUser.id));
+      allMitraIds.add(Number(mitraUser.id));
+    }
+    if (mitraUser._id) {
+      allMitraIds.add(mitraUser._id);
+      allMitraIds.add(mitraUser._id.toString());
+    }
+  }
+
   const conditions = [];
-
-  if (!isNaN(numId)) {
-    conditions.push({ mitra_id: numId });
-    conditions.push({ mitraId: numId });
-  }
-  conditions.push({ mitra_id: strId });
-  conditions.push({ mitraId: strId });
-
-  if (mongoose.Types.ObjectId.isValid(strId)) {
-    conditions.push({ mitra_id: new mongoose.Types.ObjectId(strId) });
-    conditions.push({ mitraId: new mongoose.Types.ObjectId(strId) });
-  }
+  const idArray = Array.from(allMitraIds);
+  idArray.forEach(id => {
+    conditions.push({ mitra_id: id });
+    if (typeof id === 'number' || (typeof id === 'string' && id.trim() !== '' && !isNaN(Number(id)))) {
+      conditions.push({ mitraId: Number(id) });
+    }
+  });
 
   try {
-    const studioFilter = getMitraStudioFilter(mitraId);
-    const myStudios = await Studio.find(studioFilter).select("_id id").lean();
-    const myStudioIds = myStudios.flatMap(s => [s._id, s._id ? s._id.toString() : null, s.id, s.id !== undefined ? String(s.id) : null].filter(Boolean));
+    const studioConds = [];
+    idArray.forEach(id => {
+      if (typeof id === 'number' || (typeof id === 'string' && id.trim() !== '' && !isNaN(Number(id)))) {
+        studioConds.push({ mitraId: Number(id) });
+        studioConds.push({ mitra_id: Number(id) });
+      }
+      studioConds.push({ mitra_id: id });
+    });
+
+    const myStudios = studioConds.length > 0 ? await Studio.find({ $or: studioConds }).select("_id id").lean() : [];
+    const myStudioIds = myStudios.flatMap(s => [
+      s._id,
+      s._id ? s._id.toString() : null,
+      s.id,
+      s.id !== undefined ? String(s.id) : null,
+      s.id !== undefined && !isNaN(Number(s.id)) ? Number(s.id) : null
+    ].filter(v => v !== null && v !== undefined));
+
     if (myStudioIds.length > 0) {
+      const numericStudioIds = myStudioIds.filter(v => typeof v === 'number' || (typeof v === 'string' && String(v).trim() !== '' && !isNaN(Number(v)))).map(Number);
       conditions.push({ studio_id: { $in: myStudioIds } });
-      conditions.push({ studioId: { $in: myStudioIds } });
+      if (numericStudioIds.length > 0) {
+        conditions.push({ studioId: { $in: numericStudioIds } });
+      }
     }
   } catch (err) {
     console.warn("Studio filter fallback warning:", err);
@@ -1645,24 +1689,49 @@ app.post("/bookings", async (req, res) => {
   try {
     const { studio_id, studioId, customer_id, customerId, mitra_id, mitraId, booking_date, bookingDate, booking_time, bookingTime, total_price, totalPrice, package_name, packageName, pax } = req.body;
 
-    const sId = studioId !== undefined ? studioId : studio_id;
-    const cId = customerId !== undefined ? customerId : customer_id;
-    const mId = mitraId !== undefined ? mitraId : mitra_id;
+    const sIdRaw = studioId !== undefined ? studioId : studio_id;
+    const cIdRaw = customerId !== undefined ? customerId : customer_id;
+    let mIdRaw = mitraId !== undefined ? mitraId : mitra_id;
     const bDate = bookingDate || booking_date;
     const bTime = bookingTime || booking_time;
     const tPrice = totalPrice !== undefined ? totalPrice : (total_price || 0);
     const pName = packageName || package_name || null;
 
+    const sId = (sIdRaw !== undefined && sIdRaw !== null && sIdRaw !== "") ? (!isNaN(Number(sIdRaw)) ? Number(sIdRaw) : sIdRaw) : null;
+    const cId = (cIdRaw !== undefined && cIdRaw !== null && cIdRaw !== "") ? (!isNaN(Number(cIdRaw)) ? Number(cIdRaw) : cIdRaw) : null;
+    let mId = (mIdRaw !== undefined && mIdRaw !== null && mIdRaw !== "") ? (!isNaN(Number(mIdRaw)) ? Number(mIdRaw) : mIdRaw) : null;
+
+    // Fallback: If mitra_id is missing, look up Studio by studio_id to auto-populate mitra_id
+    if ((mId === null || mId === undefined) && sId !== null) {
+      let targetStudio = null;
+      if (typeof sId === 'number') {
+        targetStudio = await Studio.findOne({ id: sId }).lean();
+      }
+      if (!targetStudio && mongoose.Types.ObjectId.isValid(sId)) {
+        targetStudio = await Studio.findById(sId).lean();
+      }
+      if (!targetStudio) {
+        targetStudio = await Studio.findOne({ $or: [{ id: sId }, { _id: sId }] }).lean();
+      }
+
+      if (targetStudio) {
+        const rawM = targetStudio.mitraId !== undefined ? targetStudio.mitraId : targetStudio.mitra_id;
+        if (rawM !== undefined && rawM !== null && rawM !== "") {
+          mId = !isNaN(Number(rawM)) ? Number(rawM) : rawM;
+        }
+      }
+    }
+
     const nextBookingId = await getNextSequence("Booking");
 
     const booking = await Booking.create({
       id: nextBookingId,
-      studio_id: !isNaN(Number(sId)) ? Number(sId) : sId,
-      studioId: !isNaN(Number(sId)) ? Number(sId) : sId,
-      customer_id: !isNaN(Number(cId)) ? Number(cId) : cId,
-      customerId: !isNaN(Number(cId)) ? Number(cId) : cId,
-      mitra_id: !isNaN(Number(mId)) ? Number(mId) : mId,
-      mitraId: !isNaN(Number(mId)) ? Number(mId) : mId,
+      studio_id: sId,
+      studioId: sId,
+      customer_id: cId,
+      customerId: cId,
+      mitra_id: mId,
+      mitraId: mId,
       booking_date: bDate,
       bookingDate: bDate,
       booking_time: bTime,
