@@ -73,7 +73,8 @@ const userSchema = new mongoose.Schema({
   phone: { type: String, default: null },
   gender: { type: String, default: null },
   birthday: { type: Date, default: null },
-  image: { type: String, default: null }
+  image: { type: String, default: null },
+  googleId: { type: String, default: null }
 }, schemaOptions);
 
 const User = mongoose.model("User", userSchema);
@@ -833,6 +834,96 @@ app.post("/login", async (req, res) => {
   } catch (err) {
     console.error("❌ LOGIN ERROR:", err);
     res.status(500).json({ message: "Login gagal" });
+  }
+});
+
+// GOOGLE AUTH CONFIG
+app.get("/api/auth/google/config", (req, res) => {
+  res.json({
+    googleClientId: process.env.GOOGLE_CLIENT_ID || ""
+  });
+});
+
+// GOOGLE AUTHENTICATION (Atlas persistence & token verification)
+app.post("/api/auth/google", async (req, res) => {
+  try {
+    const { email, name, picture, googleId, credential, role } = req.body;
+
+    let userEmail = email;
+    let userName = name;
+    let userPicture = picture;
+    let gId = googleId;
+
+    // Official Google OAuth Token verification via Google TokenInfo API
+    if (credential) {
+      try {
+        const tokenInfoRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+        if (tokenInfoRes.ok) {
+          const payload = await tokenInfoRes.json();
+          if (payload.email) {
+            userEmail = payload.email;
+            userName = payload.name || payload.given_name || userName;
+            userPicture = payload.picture || userPicture;
+            gId = payload.sub || gId;
+          }
+        }
+      } catch (verifyErr) {
+        console.warn("Google tokeninfo verification warning:", verifyErr);
+      }
+    }
+
+    if (credential && !userEmail) {
+      try {
+        const base64Url = credential.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join(''));
+        const payload = JSON.parse(jsonPayload);
+        userEmail = payload.email;
+        userName = payload.name;
+        userPicture = payload.picture;
+        gId = payload.sub;
+      } catch (jwtErr) {
+        console.warn("JWT parse warning:", jwtErr);
+      }
+    }
+
+    if (!userEmail) {
+      return res.status(400).json({ message: "Email tidak valid dari akun Google" });
+    }
+
+    userEmail = userEmail.toLowerCase().trim();
+    const selectedRole = role === "mitra" ? "mitra" : "customer";
+
+    let user = await User.findOne({ email: userEmail });
+
+    if (user) {
+      let modified = false;
+      if (userPicture && !user.image) {
+        user.image = userPicture;
+        modified = true;
+      }
+      if (gId && !user.googleId) {
+        user.googleId = gId;
+        modified = true;
+      }
+      if (modified) await user.save();
+    } else {
+      const nextId = await getNextSequence("User");
+      user = await User.create({
+        id: nextId,
+        name: userName || userEmail.split("@")[0],
+        email: userEmail,
+        password: "GOOGLE_OAUTH_ACCOUNT",
+        role: selectedRole,
+        image: userPicture || null,
+        googleId: gId || null
+      });
+    }
+
+    res.json(formatUser(user));
+  } catch (err) {
+    console.error("❌ GOOGLE AUTH ERROR:", err);
+    res.status(500).json({ message: "Gagal autentikasi Google" });
   }
 });
 

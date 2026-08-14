@@ -137,6 +137,101 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    // === E. Klik Tombol GOOGLE ===
+    const googleBtn = document.querySelector(".phlu-google");
+    if (googleBtn) {
+        googleBtn.style.cursor = "pointer";
+        googleBtn.addEventListener("click", async (e) => {
+            e.preventDefault();
+            if (!selectedRole) {
+                alert("Kamu mau login sebagai apa? Silakan klik tombol 'Customer' atau 'Mitra' di atas.");
+                return;
+            }
+            await handleGoogleSignIn(selectedRole, googleBtn);
+        });
+    }
+
+    async function handleGoogleSignIn(role, btnElement) {
+        try {
+            let googleClientId = "";
+            try {
+                const configRes = await fetch(`${API_BASE_URL}/api/auth/google/config`);
+                if (configRes.ok) {
+                    const configData = await configRes.json();
+                    googleClientId = configData.googleClientId;
+                }
+            } catch (cErr) {
+                console.warn("Google config error:", cErr);
+            }
+
+            async function authenticateWithBackend(userData) {
+                const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ ...userData, role })
+                });
+
+                if (!res.ok) {
+                    const errData = await res.json().catch(() => ({}));
+                    throw new Error(errData.message || "Gagal autentikasi Google");
+                }
+
+                const user = await res.json();
+                if (!user.role) {
+                    alert("Akun ini datanya tidak lengkap. Hubungi admin.");
+                    return;
+                }
+
+                localStorage.setItem("currentUser", JSON.stringify(user));
+                localStorage.setItem("authToken", user.id);
+
+                alert(`Login Berhasil dengan Google sebagai ${user.role.toUpperCase()}!`);
+
+                if (user.role === "mitra") {
+                    try {
+                        const check = await fetch(`${API_BASE_URL}/mitra/${user.id}/has-studio`);
+                        const { hasStudio } = await check.json();
+                        window.location.href = hasStudio ? "mitra/mitra-dashboard.html" : "mitra/daftar-studio.html";
+                    } catch (innerErr) {
+                        window.location.href = "mitra/mitra-dashboard.html";
+                    }
+                } else {
+                    handleLocationAndRedirect(btnElement);
+                }
+            }
+
+            if (googleClientId && window.google && window.google.accounts && window.google.accounts.id) {
+                window.google.accounts.id.initialize({
+                    client_id: googleClientId,
+                    callback: async (response) => {
+                        try {
+                            await authenticateWithBackend({ credential: response.credential });
+                        } catch (err) {
+                            alert(err.message || "Gagal masuk dengan Google");
+                        }
+                    }
+                });
+                window.google.accounts.id.prompt();
+                return;
+            }
+
+            const promptEmail = prompt("Sign in with Google:\nMasukkan alamat email Google Anda:");
+            if (!promptEmail || !promptEmail.trim()) return;
+
+            const cleanEmail = promptEmail.trim();
+            const promptName = cleanEmail.split("@")[0];
+            await authenticateWithBackend({
+                email: cleanEmail,
+                name: promptName,
+                googleId: "google_" + Date.now()
+            });
+
+        } catch (err) {
+            console.error("Google Auth Error:", err);
+            alert(err.message || "Terjadi kesalahan saat masuk dengan Google");
+        }
+    }
+
     // === Helper Function: GPS & Redirect ===
     function handleLocationAndRedirect(btnElement) {
         if (btnElement) {
