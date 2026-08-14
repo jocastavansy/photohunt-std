@@ -151,8 +151,26 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function loadGoogleScript() {
+        return new Promise((resolve) => {
+            if (window.google && window.google.accounts) {
+                resolve(true);
+                return;
+            }
+            const script = document.createElement("script");
+            script.src = "https://accounts.google.com/gsi/client";
+            script.async = true;
+            script.defer = true;
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.head.appendChild(script);
+        });
+    }
+
     async function handleGoogleSignIn(role, btnElement) {
         try {
+            await loadGoogleScript();
+
             let googleClientId = "";
             try {
                 const configRes = await fetch(`${API_BASE_URL}/api/auth/google/config`);
@@ -200,31 +218,54 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             }
 
-            if (googleClientId && window.google && window.google.accounts && window.google.accounts.id) {
-                window.google.accounts.id.initialize({
-                    client_id: googleClientId,
-                    callback: async (response) => {
-                        try {
-                            await authenticateWithBackend({ credential: response.credential });
-                        } catch (err) {
-                            alert(err.message || "Gagal masuk dengan Google");
+            if (googleClientId && window.google && window.google.accounts) {
+                if (window.google.accounts.oauth2) {
+                    const tokenClient = window.google.accounts.oauth2.initTokenClient({
+                        client_id: googleClientId,
+                        scope: "email profile openid",
+                        callback: async (tokenResponse) => {
+                            if (tokenResponse && tokenResponse.access_token) {
+                                try {
+                                    const userInfoRes = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+                                        headers: { Authorization: `Bearer ${tokenResponse.access_token}` }
+                                    });
+                                    if (userInfoRes.ok) {
+                                        const userInfo = await userInfoRes.json();
+                                        await authenticateWithBackend({
+                                            email: userInfo.email,
+                                            name: userInfo.name,
+                                            picture: userInfo.picture,
+                                            googleId: userInfo.sub
+                                        });
+                                        return;
+                                    }
+                                } catch (uErr) {
+                                    console.warn("Google UserInfo fetch error:", uErr);
+                                }
+                            }
                         }
-                    }
-                });
-                window.google.accounts.id.prompt();
-                return;
+                    });
+                    tokenClient.requestAccessToken({ prompt: "select_account" });
+                    return;
+                }
+
+                if (window.google.accounts.id) {
+                    window.google.accounts.id.initialize({
+                        client_id: googleClientId,
+                        callback: async (response) => {
+                            try {
+                                await authenticateWithBackend({ credential: response.credential });
+                            } catch (err) {
+                                alert(err.message || "Gagal masuk dengan Google");
+                            }
+                        }
+                    });
+                    window.google.accounts.id.prompt();
+                    return;
+                }
             }
 
-            const promptEmail = prompt("Sign in with Google:\nMasukkan alamat email Google Anda:");
-            if (!promptEmail || !promptEmail.trim()) return;
-
-            const cleanEmail = promptEmail.trim();
-            const promptName = cleanEmail.split("@")[0];
-            await authenticateWithBackend({
-                email: cleanEmail,
-                name: promptName,
-                googleId: "google_" + Date.now()
-            });
+            alert("Sistem Google Sign-In sedang menghubungkan ke server Google. Pastikan GOOGLE_CLIENT_ID terkonfigurasi di Railway.");
 
         } catch (err) {
             console.error("Google Auth Error:", err);

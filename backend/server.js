@@ -891,10 +891,17 @@ app.post("/api/auth/google", async (req, res) => {
       return res.status(400).json({ message: "Email tidak valid dari akun Google" });
     }
 
-    userEmail = userEmail.toLowerCase().trim();
+    userEmail = userEmail ? userEmail.toLowerCase().trim() : null;
     const selectedRole = role === "mitra" ? "mitra" : "customer";
 
-    let user = await User.findOne({ email: userEmail });
+    // Stable Identity Lookup: Check googleId (sub) first, then fallback to email
+    let user = null;
+    if (gId) {
+      user = await User.findOne({ googleId: gId });
+    }
+    if (!user && userEmail) {
+      user = await User.findOne({ email: userEmail });
+    }
 
     if (user) {
       let modified = false;
@@ -911,7 +918,7 @@ app.post("/api/auth/google", async (req, res) => {
       const nextId = await getNextSequence("User");
       user = await User.create({
         id: nextId,
-        name: userName || userEmail.split("@")[0],
+        name: userName || (userEmail ? userEmail.split("@")[0] : "User"),
         email: userEmail,
         password: "GOOGLE_OAUTH_ACCOUNT",
         role: selectedRole,
